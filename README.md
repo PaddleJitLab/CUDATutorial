@@ -8,7 +8,7 @@
 ### 新手村系列
 
 + [构建 CUDA 编程环境](./01_build_dev_env/)
-+ 手写第一个 Kernel
++ [手写第一个 Kernel](./02_first_kernel/)
 + nvprof 性能分析
 
 
