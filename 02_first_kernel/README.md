@@ -82,7 +82,7 @@ __global__ void add_kernel(float *x, float *y, float *out, int n){
 }
 ```
 
-此外，在 Host 端启动一个 CUDA kernel 需要特殊的「形式」，即 `<<<>>>`：
+此外，在 Host 端启动一个 CUDA kernel 需要特殊的「形式」，即 `<<<M, T>>>`，其中 M 表示一个 grid 有 M 个 thread blocks，T 表示一个 thread block 有 T 个并行 thread：
 ```cpp
 add_kernel<<<1, 1>>>(cuda_x, cuda_y, cuda_out, N);
 ```
