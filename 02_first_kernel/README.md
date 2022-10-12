@@ -170,3 +170,7 @@ out[7] = 3.000
 out[8] = 3.000
 out[9] = 3.000
 ```
+
+## 附参考文档
+
++ [Exercise: Converting vector addition to CUDA](https://cuda-tutorial.readthedocs.io/en/latest/tutorials/tutorial01/#putting-things-in-actions)
