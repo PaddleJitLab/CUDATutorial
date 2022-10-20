@@ -22,6 +22,8 @@ int main(){
 
 这里我们再复习下 `<<<M, T>>>` 的含义：三尖括号告诉 CUDA 在使用多少个 thread 拉起 kernel。多个线程一组成为 `thread block`，多个`thread block`一组成为 `grid`。因为前面的 `M` 表示一个 `grid` 有 `M` 个 `thread block`， 一个 `thread block` 里有 `T` 个 `thread`。
 
+![block_grid](./block_grid.png)
+
 我们首先将上面的 kernel 升级为多线程版本，即类似 `add_kernel<<<1, 256>>>`。CUDA 提供了一些内建的变量来访问线程相关的信息，比如：
 
 + `threadIdx.x`: 指此线程在`thread block`中的下标位置
