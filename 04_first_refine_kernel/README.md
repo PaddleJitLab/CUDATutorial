@@ -93,7 +93,7 @@ __global__ void add_kernel(float *x, float *y, float *out, int n){
 
 同样的，我们么只需要修改 `add_kernel` 中的实现，确保每个 thread 都各自独立做计算即可，我们期望每个线程都只做1个浮点数的加法操作，也就意味着我们期望在 N = 10000000 个线程上并发地同时计算，切分示意图如下：
 
-![多网格](./parallel_grid.png)
+![多网格](./parallel_block.png)
 
 其中，每个 thread block 包含的线程数依旧为 256，则需要 N/256 个 thread block，即 grid size = N/256：
 
