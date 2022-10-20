@@ -22,7 +22,7 @@ int main(){
 
 这里我们再复习下 `<<<M, T>>>` 的含义：三尖括号告诉 CUDA 在使用多少个 thread 拉起 kernel。多个线程一组成为 `thread block`，多个`thread block`一组成为 `grid`。因为前面的 `M` 表示一个 `grid` 有 `M` 个 `thread block`， 一个 `thread block` 里有 `T` 个 `thread`。
 
-![block_grid](./block_grid.png)
+![block_grid](./img/block_grid.png)
 
 我们首先将上面的 kernel 升级为多线程版本，即类似 `add_kernel<<<1, 256>>>`。CUDA 提供了一些内建的变量来访问线程相关的信息，比如：
 
@@ -45,7 +45,7 @@ __global__ void add_kernel(float *x, float *y, float *out, int n){
 
 每个线程从下标 index 开始遍历到 n，步长间隔为 stride，然后循环计算。为了让 256 个线程独立计算，我们只需要设置 stride = 256，然后每个线程计算的 index 是各自所在的 `threadIdx.x` 下标位置即可（取值范围为[0, 256)），如下图所示
 
-![多线程](./parallel_thread.png)
+![多线程](./img/parallel_thread.png)
 
 则上述 `add_kernel` 的最终版本实现为：
 ```cpp
@@ -93,7 +93,7 @@ __global__ void add_kernel(float *x, float *y, float *out, int n){
 
 同样的，我们么只需要修改 `add_kernel` 中的实现，确保每个 thread 都各自独立做计算即可，我们期望每个线程都只做1个浮点数的加法操作，也就意味着我们期望在 N = 10000000 个线程上并发地同时计算，切分示意图如下：
 
-![多网格](./parallel_block.png)
+![多网格](./img/parallel_block.png)
 
 其中，每个 thread block 包含的线程数依旧为 256，则需要 N/256 个 thread block，即 grid size = N/256：
 
