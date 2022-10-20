@@ -1,7 +1,7 @@
 # CUDATutorial
 
 从零开始学习 CUDA 高性能编程，从入门到放弃，哦不！一起来边学习，边打笔记，日拱一卒！
-
+![memory-hierarcy](./img/memory-hierarchy-in-gpus.png)
 
 ## 学习路线
 
@@ -10,14 +10,13 @@
 + [构建 CUDA 编程环境](./01_build_dev_env/)
 + [手写第一个 Kernel](./02_first_kernel/)
 + [nvprof 性能分析](./03_nvprof_usage/)
++ [尝试第一次优化 Kernel](./04_first_refine_kernel/)
 
 
 ### 初阶系列
 
 + 初识多线程并行计算
-+ 尝试第一次优化 Kernel
-+ nvprof 再次对比分析
-
++ ....(补充中)
 ### 中阶系列
 
 + 循环展开和动态并行
