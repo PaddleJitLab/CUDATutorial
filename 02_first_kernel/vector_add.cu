@@ -7,7 +7,7 @@ __global__ void add_kernel(float *x, float *y, float *out, int n){
 }
 
 int main(){
-    int N = 1000;
+    int N = 10000000;
     size_t mem_size = sizeof(float) * N;
 
     float *x, *y, *out;

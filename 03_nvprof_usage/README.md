@@ -11,24 +11,24 @@
 上一节我们使用 `nvcc ./vector_add.cu -o add` 命令生成了可执行文件，只需要在执行命令前面加上 `nvprof`，即执行 `nvprof ./add`，将会在终端中打印如下信息：
 
 ```bash
-==8936== Profiling application: ./add
-==8936== Profiling result:
+==33356== Profiling application: ./add
+==33356== Profiling result:
             Type  Time(%)      Time     Calls       Avg       Min       Max  Name
- GPU activities:   89.00%  55.936us         1  55.936us  55.936us  55.936us  add_kernel(float*, float*, float*, int)
-                    7.08%  4.4480us         2  2.2240us  2.1760us  2.2720us  [CUDA memcpy HtoD]
-                    3.92%  2.4640us         1  2.4640us  2.4640us  2.4640us  [CUDA memcpy DtoH]
-      API calls:   99.35%  379.21ms         3  126.40ms  6.4140us  379.20ms  cudaMalloc
-                    0.29%  1.1044ms       101  10.934us     235ns  428.75us  cuDeviceGetAttribute
-                    0.18%  701.73us         1  701.73us  701.73us  701.73us  cuDeviceTotalMem
-                    0.09%  327.20us         3  109.07us  5.5250us  309.13us  cudaFree
-                    0.03%  131.37us         1  131.37us  131.37us  131.37us  cuDeviceGetName
-                    0.03%  115.67us         3  38.556us  8.5120us  73.420us  cudaMemcpy
-                    0.01%  40.429us         1  40.429us  40.429us  40.429us  cudaLaunchKernel
-                    0.01%  23.405us         1  23.405us  23.405us  23.405us  cudaDeviceSynchronize
-                    0.00%  9.1040us         1  9.1040us  9.1040us  9.1040us  cuDeviceGetPCIBusId
-                    0.00%  5.8920us         3  1.9640us     392ns  3.0970us  cuDeviceGetCount
-                    0.00%  2.6680us         2  1.3340us     388ns  2.2800us  cuDeviceGet
-                    0.00%     477ns         1     477ns     477ns     477ns  cuDeviceGetUuid
+ GPU activities:   92.23%  570.25ms         1  570.25ms  570.25ms  570.25ms  add_kernel(float*, float*, float*, int)
+                    4.79%  29.586ms         1  29.586ms  29.586ms  29.586ms  [CUDA memcpy DtoH]
+                    2.99%  18.459ms         2  9.2297ms  9.2245ms  9.2349ms  [CUDA memcpy HtoD]
+      API calls:   56.06%  619.64ms         3  206.55ms  9.4402ms  600.73ms  cudaMemcpy
+                   43.58%  481.72ms         3  160.57ms  359.50us  481.00ms  cudaMalloc
+                    0.16%  1.7937ms       101  17.759us     239ns  933.68us  cuDeviceGetAttribute
+                    0.09%  1.0061ms         3  335.36us  278.68us  444.81us  cudaFree
+                    0.09%  956.79us         1  956.79us  956.79us  956.79us  cuDeviceTotalMem
+                    0.01%  132.25us         1  132.25us  132.25us  132.25us  cuDeviceGetName
+                    0.00%  50.300us         1  50.300us  50.300us  50.300us  cudaLaunchKernel
+                    0.00%  14.994us         1  14.994us  14.994us  14.994us  cudaDeviceSynchronize
+                    0.00%  10.974us         1  10.974us  10.974us  10.974us  cuDeviceGetPCIBusId
+                    0.00%  3.0460us         3  1.0150us     421ns  2.1590us  cuDeviceGetCount
+                    0.00%  1.7330us         2     866ns     328ns  1.4050us  cuDeviceGet
+                    0.00%     543ns         1     543ns     543ns     543ns  cuDeviceGetUuid
 ```
 
 `nvprof` 还有很多参数可以指定，这个我们稍后再学习。我们学习下如何看懂它给出的执行信息。
@@ -43,38 +43,38 @@
 第二部分是执行可执行文件时，GPU 各个主要「行为」的耗时占比、具体时间、调用次数、平均/最小/最大耗时，接口行为名称：
 
 ```bash
-            Type  Time(%)      Time     Calls       Avg       Min       Max  Name
- GPU activities:   89.00%  55.936us         1  55.936us  55.936us  55.936us  add_kernel(float*, float*, float*, int)
-                    7.08%  4.4480us         2  2.2240us  2.1760us  2.2720us  [CUDA memcpy HtoD]
-                    3.92%  2.4640us         1  2.4640us  2.4640us  2.4640us  [CUDA memcpy DtoH]
+           Type  Time(%)      Time     Calls       Avg       Min       Max  Name
+GPU activities:   92.23%  570.25ms        1  570.25ms  570.25ms  570.25ms  add_kernel(float*, float*, float*, int)
+                  4.79%  29.586ms         1  29.586ms  29.586ms  29.586ms  [CUDA memcpy DtoH]
+                  2.99%  18.459ms         2  9.2297ms  9.2245ms  9.2349ms  [CUDA memcpy HtoD]
 ```
 
 可以看出我们写的 CUDA 程序在 GPU 上主要包括 3 个关键活动：
 
-+ `add_kernel`：即执行 kernel 的时间，占比89%，耗时 55.9 us
-+ HtoD 的内存拷贝：即输入 `x` &rarr; `cuda_x`，`y` &rarr; `cuda_y` 的 2 次拷贝，占比 7%，耗时 4.4 us
-+ DtoH 的内存拷贝：即输出 `cuda_out` &rarr; `out` 的 1次拷贝，占比 3.9%，耗时 2.46 us 
++ `add_kernel`：即执行 kernel 的时间，占比92%，耗时 570.25 ms
++ HtoD 的内存拷贝：即输入 `x` &rarr; `cuda_x`，`y` &rarr; `cuda_y` 的 2 次拷贝，占比 2.99%，耗时 18.459 ms
++ DtoH 的内存拷贝：即输出 `cuda_out` &rarr; `out` 的 1次拷贝，占比 4.79%，耗时 29.586ms 
 
 
 第三个部分是 CUDA API 的具体调用开销，这个是从 API 层面来解读各个阶段的耗时：
 
 ```bash
             Type  Time(%)      Time     Calls       Avg       Min       Max  Name
-      API calls:   99.35%  379.21ms         3  126.40ms  6.4140us  379.20ms  cudaMalloc
-                    0.29%  1.1044ms       101  10.934us     235ns  428.75us  cuDeviceGetAttribute
-                    0.18%  701.73us         1  701.73us  701.73us  701.73us  cuDeviceTotalMem
-                    0.09%  327.20us         3  109.07us  5.5250us  309.13us  cudaFree
-                    0.03%  131.37us         1  131.37us  131.37us  131.37us  cuDeviceGetName
-                    0.03%  115.67us         3  38.556us  8.5120us  73.420us  cudaMemcpy
-                    0.01%  40.429us         1  40.429us  40.429us  40.429us  cudaLaunchKernel
-                    0.01%  23.405us         1  23.405us  23.405us  23.405us  cudaDeviceSynchronize
-                    0.00%  9.1040us         1  9.1040us  9.1040us  9.1040us  cuDeviceGetPCIBusId
-                    0.00%  5.8920us         3  1.9640us     392ns  3.0970us  cuDeviceGetCount
-                    0.00%  2.6680us         2  1.3340us     388ns  2.2800us  cuDeviceGet
-                    0.00%     477ns         1     477ns     477ns     477ns  cuDeviceGetUuid
+      API calls:   56.06%  619.64ms         3  206.55ms  9.4402ms  600.73ms  cudaMemcpy
+                   43.58%  481.72ms         3  160.57ms  359.50us  481.00ms  cudaMalloc
+                    0.16%  1.7937ms       101  17.759us     239ns  933.68us  cuDeviceGetAttribute
+                    0.09%  1.0061ms         3  335.36us  278.68us  444.81us  cudaFree
+                    0.09%  956.79us         1  956.79us  956.79us  956.79us  cuDeviceTotalMem
+                    0.01%  132.25us         1  132.25us  132.25us  132.25us  cuDeviceGetName
+                    0.00%  50.300us         1  50.300us  50.300us  50.300us  cudaLaunchKernel
+                    0.00%  14.994us         1  14.994us  14.994us  14.994us  cudaDeviceSynchronize
+                    0.00%  10.974us         1  10.974us  10.974us  10.974us  cuDeviceGetPCIBusId
+                    0.00%  3.0460us         3  1.0150us     421ns  2.1590us  cuDeviceGetCount
+                    0.00%  1.7330us         2     866ns     328ns  1.4050us  cuDeviceGet
+                    0.00%     543ns         1     543ns     543ns     543ns  cuDeviceGetUuid
 ```
 
-其中最耗时的就是 3 次 `cudasMalloc` 的调用，99.35% 的时间都在干这个事情，可以看出显存分配是一个比较「重」的操作，任何时候我们都应该尽量避免频繁的显存分配操作。在深度学习框架中，常会借助「内存池」技术一次申请较大的显存块，然后自己管理切分、分配和回收，这样就可以减少向系统 `cudaMalloc` 的次数，感兴趣的同学可以参考[Paddle源码之内存管理技术](https://www.cnblogs.com/CocoML/p/14105729.html)。
+其中最耗时的就是 3 次 `cudaMemcpy` 和`cudasMalloc` 的调用，99% 的时间都在干这两个事情，可以看出显存分配是一个比较「重」的操作，任何时候我们都应该尽量避免频繁的显存分配操作。在深度学习框架中，常会借助「内存池」技术一次申请较大的显存块，然后自己管理切分、分配和回收，这样就可以减少向系统 `cudaMalloc` 的次数，感兴趣的同学可以参考[Paddle源码之内存管理技术](https://www.cnblogs.com/CocoML/p/14105729.html)。
 
 剩下的 API 调用的开销基本差别不是特别大，大多数都是在 us 级别，我们一一介绍各个 API 的作用：
 
