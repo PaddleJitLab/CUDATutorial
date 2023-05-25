@@ -16,9 +16,12 @@
 ### 初阶系列
 
 + [初识多线程并行计算](./05_intro_parallel/)
-+ ....(补充中)
++ [手写实现矩阵乘 Matmul](./06_impl_matmul/)
++ [矩阵乘 Matmul 性能优化实践](./07_nvprof_matmul/)
 ### 中阶系列
 
++ [手写实现 Reduce](./08_impl_reduce/)
++ [Reduce 性能优化实践](./09_nvprof_reduce/)
 + 循环展开和动态并行
 + 共享内存和同步
 + 常量内存
