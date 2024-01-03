@@ -51,8 +51,8 @@ __global__ void sgemm_naive_kernel(float *A, float *B, float *C, int M, int N, i
 运行命令：
 
 ```
-nvcc -o vector_matmul vector_matmul.cu
-./vector_matmul
+nvcc -o matmul_raw matmul_raw.cu
+./matmul_raw
 ```
 
 本文中我们使用的是最简单的矩阵乘法算法，下一篇文章我们将介绍更高效的矩阵乘法算法。
