@@ -45,32 +45,38 @@ GPU 的计算过程如下图所示：
 我们首先看 `Kernel` 的实现，代码如下：
 
 ```cpp
-// reduce gpu version
 template <int BLOCKSIZE>
-__global__ void reduce_naive_kernel(int *arr, int *out, int len) {
+__global__ void reduce_naive_kernel(int *arr, int *out, int len)
+{
     __shared__ int sdata[BLOCKSIZE];
-    int tid = threadIdx.x; // 线程 id (block 内)
-    int bid = blockIdx.x; // block id (grid 内)
-    int bdim = blockDim.x; // block 大小
+    int tid = threadIdx.x;    // 线程 id (block 内)
+    int bid = blockIdx.x;     // block id (grid 内)
+    int bdim = blockDim.x;    // block 大小
     int i = bid * bdim + tid; // 全局 id
 
     // 将数据拷贝到共享内存
-    sdata[tid] = (i < len) ? arr[i] : 0;
+    if (i < len)
+    {
+        sdata[tid] = arr[i];
+    }
 
     __syncthreads(); // 等待所有线程完成
 
     // 每个线程计算 bdim^0.5 个轮回
     // 比如 bdim = 8, 则每个线程计算 2 个轮回
-    for (int s = 1; s < bdim; s *= 2) {
-        if (tid % (2 * s) == 0 && i + s < len) {
-            sdata[i] += sdata[i + s];
+    for (int s = 1; s < bdim; s *= 2)
+    {
+        if (tid % (2 * s) == 0 && i + s < len)
+        {
+            sdata[tid] += sdata[tid + s];
         }
         // 等待所有线程完成 后再进行下一轮计算
-        __syncthreads(); 
+        __syncthreads();
     }
 
     // 每个 block 的第一个线程将结果写入到 out 中
-    if (tid == 0) {
+    if (tid == 0)
+    {
         out[bid] = sdata[0];
     }
 }
