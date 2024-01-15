@@ -17,7 +17,8 @@
 
 + [初识多线程并行计算](./05_intro_parallel/)
 + [手写实现矩阵乘 Matmul](./06_impl_matmul/)
-+ [矩阵乘 Matmul 性能优化实践](./07_nvprof_matmul/)
++ [矩阵乘 Matmul 性能优化实践](./07_optimize_matmul/)
+
 ### 中阶系列
 
 + [手写实现 Reduce](./08_impl_reduce/)
