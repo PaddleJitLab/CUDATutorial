@@ -62,7 +62,7 @@ __global__ void reduce_naive_kernel(int *arr, int *out, int len)
 
     __syncthreads(); // 等待所有线程完成
 
-    // 每个线程计算 bdim^0.5 个轮回
+    // 每个线程计算 bdim^0.5(下取整) 个轮回
     // 比如 bdim = 8, 则每个线程计算 2 个轮回
     for (int s = 1; s < bdim; s *= 2)
     {
@@ -120,6 +120,9 @@ int main() {
 
     // 计算结果
     int sum = 0;
+    // 注意是gridsize，不是blocksize
+    // 因为每个block的第一个线程都会把自己的值写入到out中
+    // gridsize是block的数量（结合图理解）
     for (int i = 0; i < gridsize; i++) {
         sum += out[i];
     }
