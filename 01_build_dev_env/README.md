@@ -117,7 +117,11 @@ Hello world, CUDA! 0
 
 Windows 环境配置同样需要安装 CUDA Toolkit，下载地址为：https://developer.nvidia.com/cuda-downloads。
 
-安装成功后可尝试 `nvcc -V` 检测下。和 Linux 不同之处在于，安装 Toolkit 之后还需要配置下环境变量。默认系统会已经有 `CUDA_PATH` 和 `CUDA_PATH_V11.0`（11.0应该是版本号），需要自己在额外添加如下环境变量：
+在Windows进行安装时需要选自定义模式，采用精简模式安装后无法运行nvcc命令。
+
+安装成功后可尝试 `nvcc --version` 检测下，编译时如果缺少cl.exe，则需要安装Microsoft Visual Studio(使用C++的桌面开发版本即可)。安装完成后，将cl.exe所在路径添加到系统变量中，cl.exe通常所在文件夹为`C:\Program Files (x86)\Microsoft Visual Studio\2019\BuildTools\VC\Tools\MSVC\{version}\bin\Hostx64\x64`，具体路径根据实际安装情况有所不同。
+
+和 Linux 不同之处在于，安装 Toolkit 之后还需要配置下环境变量。默认系统会已经有 `CUDA_PATH` 和 `CUDA_PATH_V11.0`（11.0应该是版本号），需要自己在额外添加如下环境变量：
 
 ```bash
 CUDA_BIN_PATH: %CUDA_PATH%\bin
