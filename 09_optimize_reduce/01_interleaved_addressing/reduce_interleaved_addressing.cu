@@ -5,7 +5,7 @@
 const int len = 32 * 1024 * 1024;
 
 template <int BLOCKSIZE>
-__global__ void reduce_naive_kernel(int *arr, int *out, int len)
+__global__ void reduce_interleaved_addressing(int *arr, int *out, int len)
 {
     __shared__ int sdata[BLOCKSIZE];
     int tid = threadIdx.x;    // 线程 id (block 内)
@@ -63,7 +63,7 @@ int main()
     const int gridsize = (len + blocksize - 1) / blocksize;
 
     // 调用 kernel 函数
-    reduce_naive_kernel<blocksize><<<gridsize, blocksize>>>(d_arr, d_out, len);
+    reduce_interleaved_addressing<blocksize><<<gridsize, blocksize>>>(d_arr, d_out, len);
 
     // 拷贝数据到内存
     cudaMemcpy(out, d_out, sizeof(int) * len, cudaMemcpyDeviceToHost);
