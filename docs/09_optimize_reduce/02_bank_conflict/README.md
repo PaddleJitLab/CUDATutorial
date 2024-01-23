@@ -1,4 +1,4 @@
-# Reduce 性能优化—解决 bank conflict
+# 解决 bank conflict
 
 上一篇文章中我们通过交叉寻址的方式解决了 warp divergence 的问题。具体的做法就是让连续的线程尽可能保持一样的行为，这样就不会出现分支判断的情况，从而避免了 warp divergence。但是这种做法也会带来一个新的问题，那就是 bank conflict。本文将会介绍 bank conflict 的原因以及解决方案。
 
