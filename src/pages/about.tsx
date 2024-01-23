@@ -25,13 +25,13 @@ function githubPic(name: string) {
 }
 
 var friendsData: FriendData[] = [
-//   {
-//     pic: githubPic("AndSonder"),
-//     name: "AndSonder",
-//     intro: "無限進步 !",
-//     url: "https://github.com/andsonder",
-//     note: "",
-//   }
+  {
+    pic: githubPic("AndSonder"),
+    name: "AndSonder",
+    intro: "無限進步 !",
+    url: "https://github.com/andsonder",
+    note: "",
+  }
 ];
 
 function Friends() {
