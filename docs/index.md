@@ -23,7 +23,7 @@
 ### 中阶系列
 
 + [手写实现 Reduce](/impl_reduce)
-+ [Reduce 性能优化实践](/nvprof_reduce)
++ [Reduce 性能优化实践](/optimize_reduce)
 + 循环展开和动态并行
 + 共享内存和同步
 + 常量内存
