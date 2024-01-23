@@ -14,7 +14,7 @@ GPU 上一般包含很多流式处理器 SM，每个 SM 是 CUDA 架构中的基
 
 ## 线程索引
 
-在[尝试第一次优化 Kernel](../04_first_refine_kernel/)中的多 Block 优化的 `add_kernel` 函数实现中，我们计算了 `tid` 的唯一线程标识：
+在[尝试第一次优化 Kernel](https://cuda.keter.top/first_refine_kernel/)中的多 Block 优化的 `add_kernel` 函数实现中，我们计算了 `tid` 的唯一线程标识：
 ```cpp
 __global__ void add_kernel(float *x, float *y, float *out, int n){
     // 唯一的线程下标
