@@ -17,8 +17,8 @@ jobs:
 
     - name: Merge to Docs Branch
       run: |
-        git config user.name "andsonder"
-        git config user.email "changlu@keter.top"
+        git config user.name "Aurelius84"
+        git config user.email "zhangliujie@baidu.com"
         
         git checkout docs
         git merge develop --no-edit
