@@ -12,14 +12,12 @@ jobs:
     steps:
     - name: Checkout Repository
       uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
 
     - name: Merge to Docs Branch
       run: |
         git config user.name "andsonder"
         git config user.email "changlu@keter.top"
-
+        
         git remote add origin_with_token https://username:${{ secrets.GITHUB_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git
         git fetch origin_with_token
         
