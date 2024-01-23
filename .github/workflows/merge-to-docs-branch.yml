@@ -14,10 +14,12 @@ jobs:
       run: |
         git config user.name "andsonder"
         git config user.email "changlu@keter.top"
+        git config pull.rebase false
+
+        git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git
+        cd CUDATutorial
+        git fetch --all
         
-        git remote add origin_with_token https://${{ secrets.GITHUB_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git
-        git fetch origin_with_token
-        
-        git checkout -- docs
-        git pull origin_with_token develop
-        git push origin_with_token docs
+        git checkout -b docs origin/docs
+        git pull origin develop
+        git push origin docs
