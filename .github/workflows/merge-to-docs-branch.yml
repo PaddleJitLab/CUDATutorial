@@ -17,8 +17,8 @@ jobs:
 
     - name: Merge to Docs Branch
       run: |
-        git config user.name "${{ github.actor }}"
-        git config user.email "${{ github.actor }}@users.noreply.github.com"
+        git config user.name "andsonder"
+        git config user.email "changlu@keter.top"
         
         git checkout docs
         git merge develop --no-edit
