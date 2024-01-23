@@ -20,7 +20,7 @@ jobs:
         git config user.name "andsonder"
         git config user.email "changlu@keter.top"
         git config pull.rebase false
-        git remote set-url origin "https://${{ secrets.SONDER_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git"
+        git remote set-url origin "https://andsonder:${{ secrets.SONDER_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git"
         git remote -v
         git fetch --all
         git pull origin develop --no-edit
