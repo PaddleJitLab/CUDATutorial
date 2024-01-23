@@ -10,9 +10,8 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-    - name: clone
-      run: |
-        git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git CUDATutorial
+    - name: Checkout Repository
+      uses: actions/checkout@v2
 
     - name: Merge to Docs Branch
       run: |
@@ -20,7 +19,6 @@ jobs:
         git config user.email "changlu@keter.top"
         git config pull.rebase false
 
-        cd CUDATutorial/
         git fetch --all
         
         git checkout -b docs origin/docs
