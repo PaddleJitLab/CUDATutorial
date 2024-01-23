@@ -10,15 +10,18 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
+    - name: clone
+      run: |
+        git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git CUDATutorial
+        git fetch --all
+
     - name: Merge to Docs Branch
       run: |
         git config user.name "andsonder"
         git config user.email "changlu@keter.top"
         git config pull.rebase false
 
-        git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git CUDATutorial
         cd CUDATutorial/
-        git fetch --all
         
         git checkout -b docs origin/docs
         git pull origin develop
