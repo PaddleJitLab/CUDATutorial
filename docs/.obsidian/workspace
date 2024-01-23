@@ -1,0 +1,146 @@
+{
+  "main": {
+    "id": "ae09cf7801b7cf05",
+    "type": "split",
+    "children": [
+      {
+        "id": "c2fba758914ed24e",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "deep_learning/基础知识/2-图像分类-KNN与线性分类器.md",
+            "mode": "source",
+            "source": false
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "78d840031e8ff5f7",
+    "type": "split",
+    "children": [
+      {
+        "id": "3079685a2e20a962",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "2565bd770473cc0a",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "68ae7ba273126182",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 200
+  },
+  "right": {
+    "id": "aa83212822aada9c",
+    "type": "split",
+    "children": [
+      {
+        "id": "6595c7b1ef9410f4",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "f4e25a0b3bd8432a",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "deep_learning/基础知识/2-图像分类-KNN与线性分类器.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          },
+          {
+            "id": "c7aa4d9fa35b8ac0",
+            "type": "leaf",
+            "state": {
+              "type": "outline",
+              "state": {
+                "file": "deep_learning/基础知识/2-图像分类-KNN与线性分类器.md"
+              }
+            }
+          },
+          {
+            "id": "64856c5915fb268c",
+            "type": "leaf",
+            "state": {
+              "type": "todo",
+              "state": {}
+            }
+          },
+          {
+            "id": "10dd4daa2dfad206",
+            "type": "leaf",
+            "state": {
+              "type": "calendar",
+              "state": {}
+            }
+          },
+          {
+            "id": "eb8d11165efe3e3d",
+            "type": "leaf",
+            "state": {
+              "type": "dictionary-view",
+              "state": {}
+            }
+          },
+          {
+            "id": "32c27eacc4cdf46e",
+            "type": "leaf",
+            "state": {
+              "type": "advanced-tables-toolbar",
+              "state": {}
+            }
+          }
+        ],
+        "currentTab": 1
+      }
+    ],
+    "direction": "horizontal",
+    "width": 219,
+    "collapsed": true
+  },
+  "active": "c2fba758914ed24e",
+  "lastOpenFiles": [
+    "deep_learning/基础知识/2-图像分类-KNN与线性分类器.md",
+    "algorithm/5-DP.md",
+    "algorithm/4-数论.md",
+    "algorithm/99-闫氏DP分析法.md",
+    "react/5-diff.md",
+    "react/3-refs.md",
+    "react/1-bindevent.md",
+    "react/1-state.md",
+    "react/4-lifecycle.md",
+    "react/0-hooks.md"
+  ]
+}

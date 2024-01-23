@@ -1,0 +1,10 @@
+{
+  "attachmentFolderPath": "./images",
+  "legacyEditor": false,
+  "useMarkdownLinks": true,
+  "promptDelete": true,
+  "alwaysUpdateLinks": true,
+  "newLinkFormat": "relative",
+  "vimMode": true,
+  "autoConvertHtml": true
+}
