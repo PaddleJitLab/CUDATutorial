@@ -22,5 +22,5 @@ jobs:
         git fetch --all
         
         git checkout -b docs origin/docs
-        git pull origin develop
+        git pull origin develop --allow-unrelated-histories --no-edit
         git push origin docs
