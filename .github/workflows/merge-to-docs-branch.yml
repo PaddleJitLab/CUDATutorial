@@ -1,0 +1,26 @@
+name: Merge to Docs Branch
+
+on:
+  push:
+    branches:
+      - develop
+
+jobs:
+  merge-to-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+
+    - name: Merge to Docs Branch
+      run: |
+        git config user.name "andsonder"
+        git config user.email "changlu@keter.top"
+        git config pull.rebase false
+
+        git fetch --all
+        
+        git checkout -b docs origin/docs
+        git pull origin develop
+        git push origin docs
