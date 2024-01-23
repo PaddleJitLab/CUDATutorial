@@ -16,8 +16,8 @@ jobs:
         git config user.email "changlu@keter.top"
         git config pull.rebase false
 
-        git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git
-        cd CUDATutorial
+        git clone https://${{ secrets.GITHUB_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git CUDATutorial
+        cd CUDATutorial/
         git fetch --all
         
         git checkout -b docs origin/docs
