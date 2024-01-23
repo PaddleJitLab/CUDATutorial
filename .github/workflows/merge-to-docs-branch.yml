@@ -27,4 +27,4 @@ jobs:
         git checkout -b docs origin/docs
         git pull origin docs --allow-unrelated-histories --no-edit
         git pull origin develop --allow-unrelated-histories --no-edit
-        git push origin docs
+        git push origin docs -u ${{ secrets.GITHUB_TOKEN }}
