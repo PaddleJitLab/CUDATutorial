@@ -22,6 +22,7 @@ jobs:
         git config pull.rebase false
         git remote add origin_token https://${{ secrets.SONDER_TOKEN }}@github.com/PaddleJitLab/CUDATutorial
 
+        git remote -v
         git fetch --all
         git pull origin_token develop --allow-unrelated-histories --no-edit
         
