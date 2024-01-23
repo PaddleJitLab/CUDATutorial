@@ -13,20 +13,20 @@ jobs:
     - name: Checkout Repository
       uses: actions/checkout@v2
       with:
-        fetch-depth: 0
+      fetch-depth: 0
 
     - name: Merge to Docs Branch
       run: |
         git config user.name "andsonder"
         git config user.email "changlu@keter.top"
         git config pull.rebase false
+        git remote add origin_token https://${{ secrets.SONDER_TOKEN }}@github.com/PaddleJitLab/CUDATutorial
 
         git fetch --all
-        git pull origin develop --allow-unrelated-histories --no-edit
+        git pull origin_token develop --allow-unrelated-histories --no-edit
         
-        git checkout -b docs origin/docs
-        git pull origin docs --allow-unrelated-histories --no-edit
-        git pull origin develop --allow-unrelated-histories --no-edit
+        git checkout -b docs origin_token/docs
+        git pull origin_token docs --allow-unrelated-histories --no-edit
+        git pull origin_token develop --allow-unrelated-histories --no-edit
 
-        git remote add origin_token https://${{ secrets.SONDER_TOKEN }}@github.com/PaddleJitLab/CUDATutorial
         git push origin_token docs
