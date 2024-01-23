@@ -28,5 +28,5 @@ jobs:
         git pull origin docs --allow-unrelated-histories --no-edit
         git pull origin develop --allow-unrelated-histories --no-edit
 
-        git remote add origin_token https://${{ secrets.GITHUB_TOKEN }}@github.com/PaddleJitLab/CUDATutorial
+        git remote add origin_token https://${{ secrets.SONDER_TOKEN }}@github.com/PaddleJitLab/CUDATutorial
         git push origin_token docs
