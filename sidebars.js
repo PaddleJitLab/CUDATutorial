@@ -88,8 +88,4 @@ const sidebars = {
     ]
 };
 
-<<<<<<< HEAD
 module.exports = sidebars;
-=======
-module.exports = sidebars;
->>>>>>> b174cde53ab80ffa177b3665f1c98f9a7d100020
