@@ -2,7 +2,7 @@
 
 ## 1. 多线程计算
 
-在[《手写第一个 Kernel》](../02_first_kernel/) 章节中，我们实现了两个 1D 张量的最朴素版本的 CUDA kernel：
+在《手写第一个 Kernel》章节中，我们实现了两个 1D 张量的最朴素版本的 CUDA kernel：
 ```cpp
 __global__ void add_kernel(float *x, float *y, float *out, int n){
     for (int i = 0; i < n; ++i) {
@@ -71,7 +71,7 @@ __global__ void add_kernel(float *x, float *y, float *out, int n){
                    23.62%  14.745ms         1  14.745ms  14.745ms  14.745ms  add_kernel(float*, float*, float*, int)
 ```
 
-相对于[《手写第一个 Kernel》](../02_first_kernel/) 章节中的性能提升：
+相对于《手写第一个 Kernel》 章节中的性能提升：
 
 |     | 耗时 |加速比|
 |:---:|:---:|:---:|
@@ -124,7 +124,7 @@ __global__ void add_kernel(float *x, float *y, float *out, int n){
                     0.33%  152.61us         1  152.61us  152.61us  152.61us  add_kernel(float*, float*, float*, int)
 ```
 
-相对于[《手写第一个 Kernel》](../02_first_kernel/) 章节中的性能提升：
+相对于《手写第一个 Kernel》章节中的性能提升：
 
 |     | 耗时 |加速比|
 |:---:|:---:|:---:|

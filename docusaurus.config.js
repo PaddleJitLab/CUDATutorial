@@ -58,7 +58,7 @@ const config = {
         hashed: true,
         // For Docs using Chinese, The `language` is recommended to set to:
         // ```
-        language: ["en", "zh"],
+        language: ["zh"],
         // ```
         // When applying `zh` in language, please install `nodejieba` in your project.
         translations: {
@@ -96,11 +96,6 @@ const config = {
                         label: "Docs",
                         position: "left",
                     },
-                    // {
-                    //   href: '/About',
-                    //   label: 'About',
-                    //   position: 'right',
-                    // },
                     {
                         href: 'https://github.com/PaddleJitLab/CUDATutorial',
                         label: 'GitHub',
