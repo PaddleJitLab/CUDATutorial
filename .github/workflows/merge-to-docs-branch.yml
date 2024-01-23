@@ -20,12 +20,12 @@ jobs:
         git config user.name "andsonder"
         git config user.email "changlu@keter.top"
         git config pull.rebase false
-        git remote set-url origin "https://github-actions:${{ secrets.SONDER_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git"
+        git remote set-url origin "https://${{ secrets.SONDER_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git"
         git remote -v
         git fetch --all
-        git pull origin develop --allow-unrelated-histories --no-edit
+        git pull origin develop --no-edit
 
         git checkout -b docs origin/docs
-        git pull origin docs --allow-unrelated-histories --no-edit
-        git pull origin develop --allow-unrelated-histories --no-edit
-        git push origin docs --allow-unrelated-histories --no-edit
+        git pull origin docs --no-edit
+        git pull origin develop --no-edit
+        git push origin docs
