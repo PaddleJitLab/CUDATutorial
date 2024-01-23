@@ -27,33 +27,4 @@ jobs:
         git checkout -b docs origin/docs
         git pull origin docs --allow-unrelated-histories --no-edit
         git pull origin develop --allow-unrelated-histories --no-edit
-        name: Merge to Docs Branch
-
-on:
-  push:
-    branches:
-      - develop
-
-jobs:
-  merge-to-docs:
-    runs-on: ubuntu-latest
-
-    steps:
-    - name: Checkout Repository
-      uses: actions/checkout@v2
-      with:
-        fetch-depth: 0
-
-    - name: Merge to Docs Branch
-      run: |
-        git config user.name "andsonder"
-        git config user.email "changlu@keter.top"
-        git config pull.rebase false
-
-        git fetch --all
-        git pull origin develop --allow-unrelated-histories --no-edit
-        
-        git checkout -b docs origin/docs
-        git pull origin docs --allow-unrelated-histories --no-edit
-        git pull origin develop --allow-unrelated-histories --no-edit
         git push https://${{ secrets.GITHUB_TOKEN }}@github.com/PaddleJitLab/CUDATutorial docs
