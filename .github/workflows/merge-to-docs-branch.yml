@@ -19,7 +19,10 @@ jobs:
       run: |
         git config user.name "andsonder"
         git config user.email "changlu@keter.top"
+
+        git remote add origin_with_token https://username:${{ secrets.GITHUB_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git
+        git fetch origin_with_token
         
         git checkout docs
         git merge develop --no-edit
-        git push origin docs
+        git push origin_with_token docs
