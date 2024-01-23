@@ -1,5 +1,7 @@
 name: Merge to Docs Branch
 
+permissions: write-all
+
 on:
   push:
     branches:
