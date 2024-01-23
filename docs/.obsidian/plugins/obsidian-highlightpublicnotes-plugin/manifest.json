@@ -1,0 +1,10 @@
+{
+	"id": "obsidian-highlightpublicnotes-plugin",
+	"name": "Highlight Public Notes",
+	"version": "1.5.1",
+	"minAppVersion": "0.9.12",
+	"description": "This plugin warns that a note is public (based on a frontmatter attribute) by colorizing the note red.",
+	"author": "dennis seidel",
+	"authorUrl": "https://dennisseidel.de",
+	"isDesktopOnly": false
+}

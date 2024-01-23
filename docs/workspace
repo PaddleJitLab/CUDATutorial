@@ -1,0 +1,100 @@
+{
+  "main": {
+    "id": "2f3bb560938d1742",
+    "type": "split",
+    "children": [
+      {
+        "id": "2109d1f31b117e68",
+        "type": "leaf",
+        "state": {
+          "type": "markdown",
+          "state": {
+            "file": "【白帽子学习笔记】XSS和SQL注入.md",
+            "mode": "source",
+            "source": false
+          }
+        }
+      }
+    ],
+    "direction": "vertical"
+  },
+  "left": {
+    "id": "53449c98b853094d",
+    "type": "split",
+    "children": [
+      {
+        "id": "9ce870085bd45fb7",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "49a987cc4c93c657",
+            "type": "leaf",
+            "state": {
+              "type": "file-explorer",
+              "state": {}
+            }
+          },
+          {
+            "id": "3cee2315e67d7745",
+            "type": "leaf",
+            "state": {
+              "type": "search",
+              "state": {
+                "query": "",
+                "matchingCase": false,
+                "explainSearch": false,
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical"
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "right": {
+    "id": "021bb266ef50054f",
+    "type": "split",
+    "children": [
+      {
+        "id": "70e720a5693c3dff",
+        "type": "tabs",
+        "children": [
+          {
+            "id": "411703a7b565f641",
+            "type": "leaf",
+            "state": {
+              "type": "backlink",
+              "state": {
+                "file": "【白帽子学习笔记】XSS和SQL注入.md",
+                "collapseAll": false,
+                "extraContext": false,
+                "sortOrder": "alphabetical",
+                "showSearch": false,
+                "searchQuery": "",
+                "backlinkCollapsed": false,
+                "unlinkedCollapsed": true
+              }
+            }
+          }
+        ]
+      }
+    ],
+    "direction": "horizontal",
+    "width": 300
+  },
+  "active": "2109d1f31b117e68",
+  "lastOpenFiles": [
+    "【白帽子学习笔记】XSS和SQL注入.md",
+    "「操作系统」操作系统笔记.md",
+    "【论文阅读】Real-World-Adversarial-attack.md",
+    "【算法】第十一届蓝桥杯国赛题解.md",
+    "【白帽子学习笔记】CTF实践.md",
+    "【课程学习】计算机网络知识点笔记.md",
+    "「C3121N」卷积神经网络.md",
+    "「算法基础课」基础算法.md"
+  ]
+}

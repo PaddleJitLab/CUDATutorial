@@ -1,0 +1,26 @@
+.iframe__modal {
+    max-width: 90vw;
+}
+
+.iframe__modal .space-y {
+    margin-top: 1em;
+}
+
+.iframe__modal__container {
+    max-width: 100%;
+}
+
+.iframe__modal__container .iframe__container{
+	min-height:  300px;
+}
+
+.iframe__modal__container .iframe__container iframe {
+    position: relative;
+	overflow: auto;
+	resize: both;
+    max-width: 100%;
+}
+
+.iframe__modal__container .button__container {
+    text-align: center;
+}

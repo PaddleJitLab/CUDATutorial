@@ -1,0 +1,202 @@
+/**
+ * Any CSS included here will be global. The classic template
+ * bundles Infima by default. Infima is a CSS framework designed to
+ * work well for content-centric websites.
+ */
+
+/* You can override the default Infima variables here. */
+:root {
+  --ifm-color-primary: #3876ac;
+  --ifm-color-primary-dark: #3876ac;
+  --ifm-color-primary-darker: #3876ac;
+  --ifm-color-primary-darkest: #3876ac;
+  --ifm-color-primary-light: #3876ac;
+  --ifm-color-primary-lighter: #3876ac;
+  --ifm-color-primary-lightest: #3876ac;
+  --ifm-code-font-size: 95%;
+}
+
+/* For readability concerns, you should choose a lighter palette in dark mode. */
+html[data-theme='dark'] {
+  --ifm-color-primary: #25c2a0;
+  --ifm-color-primary-dark: #17bf9b;
+  --ifm-color-primary-darker: #1fa588;
+  --ifm-color-primary-darkest: #1a8870;
+  --ifm-color-primary-light: #29d5b0;
+  --ifm-color-primary-lighter: #32d8b4;
+  --ifm-color-primary-lightest: #4fddbf;
+}
+
+.docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.1);
+  display: block;
+  margin: 0 calc(-1 * var(--ifm-pre-padding));
+  padding: 0 var(--ifm-pre-padding);
+}
+
+html[data-theme='dark'] .docusaurus-highlight-code-line {
+  background-color: rgba(0, 0, 0, 0.3);
+}
+
+.friend-item {
+  user-select: none;
+  cursor: pointer;
+  transition: all 0.3s;
+  filter: brightness(0.7);
+}
+
+.friend-item:hover {
+  filter: brightness(0.9);
+}
+
+.friend-item.current {
+  filter: brightness(1);
+}
+
+.friend-item {
+  height: 50px;
+  width: 50px;
+}
+
+.friend-item img {
+  height: 50px;
+  width: 50px;
+  border-radius: 20%;
+}
+
+.friend-item {
+  margin: 3px 5px;
+}
+
+.friend-card-outer {
+  position: relative;
+  max-width: 350px;
+}
+
+.friend-card {
+  animation: friend-card-fadein .3s;
+}
+
+@keyframes friend-card-fadein {
+  from {
+    opacity: 0;
+    transform: translate(20px, 0);
+  }
+  to {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+}
+
+@keyframes friend-card-fadeout {
+  from {
+    opacity: 1;
+    transform: translate(0, 0);
+  }
+  to {
+    opacity: 0;
+    transform: translate(-20px, 0);
+  }
+}
+
+.friend-card.fadeout {
+  position: absolute;
+  animation: friend-card-fadeout .3s;
+  opacity: 0;
+  pointer-events: none;
+}
+
+.friends {
+  margin-top: 100px;
+  margin-bottom: 100px;
+  min-height: 650px;
+}
+
+.friend-list {
+  display: flex;
+  flex-direction: column;
+  justify-content: flex-start;
+  flex-wrap: wrap;
+  height: 600px;
+}
+
+.friend-columns {
+  width: 100%;
+  display: flex;
+  justify-content: space-evenly;
+}
+
+@media screen and (max-width: 600px) {
+  .friends {
+    margin-top: 50px;
+    margin-bottom: 50px;
+  }
+  .friend-card-outer {
+    max-width: 400px;
+    margin: 20px;
+  }
+  .friend-list {
+    flex-direction: row;
+    height: initial;
+    /* width: 400px; */
+    margin: 20px;
+  }
+  .friend-columns {
+    /* order: 1; */
+    flex-direction: column;
+    height: initial;
+    align-items: center;
+  }
+  .friend-card-outer {
+    /* order: 2; */
+    min-height: 600px;
+  }
+}
+
+html, body {
+  font-family: Optima-Regular, Optima, PingFangSC-light, PingFangSC-Light !important;
+  font-size: 17px !important;
+}
+
+h2 {
+  font-weight: bold;
+  color: rgb(64, 184, 250);
+}
+
+h3 {
+  color: #40b8fa;
+  font-family: Optima-Regular, Optima, PingFangSC-light, PingFangSC-Light !important;
+}
+
+
+main {
+  font-size: 18.5px !important;
+}
+
+img {
+  clear: both !important;
+  display: block !important;
+  margin: auto !important;
+}
+
+h4 {
+  font-size: 21px !important;
+  font-family: Optima-Regular, Optima, PingFangSC-light, PingFangSC-Light !important;
+  color: #3f4546;
+}
+
+h5{
+  font-size: 18.5px !important;
+  font-family: Optima-Regular, Optima, PingFangSC-light, PingFangSC-Light !important;
+  color: #3f4546;
+}
+
+.katex
+{
+  font-size: 20px !important;
+}
+
+.codeBlockLines_mRuA
+{
+  font-size: 17px !important;
+}
