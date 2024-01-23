@@ -6,10 +6,14 @@ const darkCodeTheme = require('prism-react-renderer/themes/dracula');
 const math = require('remark-math');
 const katex = require('rehype-katex');
 
+module.exports = {
+    baseUrl: '/',
+};
+
 /** @type {import('@docusaurus/types').Config} */
 const config = {
   title: 'Notebook',
-  tagline: '这里是Sonder的宝藏笔记本',
+  tagline: '',
   url: 'https://space.keter.top',
   baseUrl: '/',
   onBrokenLinks: 'throw',
@@ -25,18 +29,20 @@ const config = {
       ({
         docs: {
           sidebarPath: require.resolve('./sidebars.js'),
-          // Please change this to your repo.
-          editUrl: 'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+              // Please change this to your repo.
+          routeBasePath: '/',
+          editUrl: 'https://github.com/PaddleJitLab/CUDATutorial/tree/develop',
           remarkPlugins: [math],
           rehypePlugins: [katex],
         },
         blog: {
           showReadingTime: true,
-          // Please change this to your repo.
+            // Please change this to your repo.
+          routeBasePath: '/',
           editUrl:
-            'https://github.com/facebook/docusaurus/tree/main/packages/create-docusaurus/templates/shared/',
+            'https://github.com/PaddleJitLab/CUDATutorial/tree/develop',
         },
-        theme: {
+          theme: {
           customCss: require.resolve('./src/css/custom.css'),
         },
       }),
@@ -85,8 +91,8 @@ const config = {
                 },
                 items: [
                     {
-                        to: "/docs/build_dev_env",
-                        activeBasePath: '/docs/build_dev_env',
+                        to: "/build_dev_env",
+                        activeBasePath: '/build_dev_env',
                         label: "Docs",
                         position: "left",
                     },
