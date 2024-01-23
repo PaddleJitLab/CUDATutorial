@@ -20,7 +20,9 @@ jobs:
         git config pull.rebase false
 
         git fetch --all
+        git pull origin develop --allow-unrelated-histories --no-edit
         
         git checkout -b docs origin/docs
+        git pull origin docs --allow-unrelated-histories --no-edit
         git pull origin develop --allow-unrelated-histories --no-edit
         git push origin docs
