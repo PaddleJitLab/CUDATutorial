@@ -70,4 +70,7 @@ nvcc reduce_idle_threads_free.cu -o reduce_idle_threads_free
 当程序中有大量的空闲线程时，我们可以让空闲的线程也做一些工作，也可以减少线程的数量。
 下一篇文章中我们会通过展开warp来进一步提高Kernel的性能。
 
+## Reference
 
+1. https://developer.download.nvidia.com/assets/cuda/files/reduction.pdf
+2. http://www.giantpandacv.com/project/OneFlow/%E3%80%90BBuf%E7%9A%84CUDA%E7%AC%94%E8%AE%B0%E3%80%91%E4%B8%89%EF%BC%8Creduce%E4%BC%98%E5%8C%96%E5%85%A5%E9%97%A8%E5%AD%A6%E4%B9%A0%E7%AC%94%E8%AE%B0/
