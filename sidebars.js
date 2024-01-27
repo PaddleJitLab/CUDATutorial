@@ -27,6 +27,11 @@ const sidebars = {
     build_dev_env: [
         {
             type: 'category',
+            label: '介绍',
+            items: ['index'],
+        },
+        {
+            type: 'category',
             label: '新手村系列',
             items: [
                 {
