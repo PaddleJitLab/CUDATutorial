@@ -62,7 +62,7 @@ nvcc reduce_idle_threads_free.cu -o reduce_idle_threads_free
 | Baseline | 3118.4 | 42.503GB/s | ~ |
 | 交错寻址 | 1904.4 | 73.522GB/s | 1.64 |
 | 解决 bank conflict | 1475.2 | 97.536GB/s | 2.29 |
-| 去除 idle 线程 | 758.38 | 97.536GB/s | 4.11 |
+| 去除 idle 线程 | 758.38 | 189.78GB/s | 4.11 |
 
 ## 3. 总结
 
