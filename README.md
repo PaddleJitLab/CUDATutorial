@@ -15,7 +15,7 @@
 + [手写第一个 Kernel](./docs/02_first_kernel/)
 + [nvprof 性能分析](./docs/03_nvprof_usage/)
 + [尝试第一次优化 Kernel](./docs/04_first_refine_kernel/)
-
++ [了解cuda线程分布](./docs/10_what_my_id/)
 
 ### 初阶系列
 
