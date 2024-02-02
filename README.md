@@ -26,11 +26,10 @@
 ### 中阶系列
 
 + [手写实现 Reduce](./docs/08_impl_reduce/)
-+ [Reduce 性能优化实践](./docs/09_optimize_reduce/)
-+ 循环展开和动态并行
-+ 共享内存和同步
-+ 常量内存
-+ ....(补充中)
++ [Reduce 性能优化实践—交叉寻址](./docs/09_optimize_reduce/01_interleaved_addressing/README.md)
++ [Reduce 性能优化实践—解决 Bank Conflict](./docs/09_optimize_reduce/02_bank_conflict/README.md)
++ [Reduce 性能优化实践—解决空闲线程](./docs/09_optimize_reduce/03_idle_thread/README.md)
++ [Reduce 性能优化实践—展开最后一个 warp](./docs/09_optimize_reduce/04_unroll_last_warp/README.md)
 
 ### 高阶系列
 

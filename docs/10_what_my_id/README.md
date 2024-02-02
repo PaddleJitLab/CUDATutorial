@@ -1,4 +1,5 @@
 # 打印线程号相关信息
+<<<<<<< HEAD
 本章节旨在帮助用户了解cuda内部线程块划分的规则，理解线程号的计算逻辑。
 
 ## 1. 1维block和1维thread
@@ -8,10 +9,22 @@ threadIdx.x 代表当前现在在当前block中是第几个thread;
 warp_idx 代表当前线程在当前block中是第几个warp;（warp 会选择相邻的线程号做组合）
 calc_idx 代表当前线程计算的是全局的第几个thread; 
 block的索引 * 每个block的thread个数 + block内的thread索引 计算出全局索引。
+=======
+    本章节旨在帮助用户了解cuda内部线程块划分的规则，理解线程号的计算逻辑。
+
+## 1. 1维block和1维thread
+    样例中设置了两个block,每个block中64个线程,  blockDim.x = 64
+    blockIdx.x 代表当前线程所在第几个block; 
+    threadIdx.x 代表当前现在在当前block中是第几个thread; 
+    warp_idx 代表当前线程在当前block中是第几个warp;（warp 会选择相邻的线程号做组合）
+    calc_idx 代表当前线程计算的是全局的第几个thread; 
+    block的索引 * 每个block的thread个数 + block内的thread索引 计算出全局索引。
+>>>>>>> b47864458a8c315a0f6aace10ded33296bccb9e6
 ```c++
    const unsigned int thread_idx = blockIdx.x * blockDim.x + threadIdx.x;
 ```
 
+<<<<<<< HEAD
 编译命令 
 ```bash
 nvcc my_id.cu -o my_id
@@ -21,6 +34,8 @@ nvcc my_id.cu -o my_id
 ./my_id
 ```
 运行结果
+=======
+>>>>>>> b47864458a8c315a0f6aace10ded33296bccb9e6
 ```bash
 cac_thread   0 - block  0 - warp   0 - thread  0
 cac_thread   1 - block  0 - warp   0 - thread  1
@@ -155,6 +170,7 @@ cac_thread 126 - block  1 - warp   1 - thread 62
 cac_thread 127 - block  1 - warp   1 - thread 63
 ```
 ## 2.  2维block和2维thread
+<<<<<<< HEAD
 前四列是用户调用kernel时设置的block个数 4（1，4）thread个数 128（32, 4) 共计512个线程，每个线程中该数固定。
 
 gradDim.x 描述block 在x维上的个数； gradDim.y 描述block 在y维上的个数； 
@@ -164,6 +180,17 @@ blcokDim.x 描述每个block 的x维上thread的个数；blockDim.y 描述每个
 
 第六到九列分别描述当前线程blockIdx.x: 在grid 的x维上第几个block, blockIdx.y: grid的y维上第几个块，
                         threadIdx.x: 在block 的x维上第几个thread，threadIdx.y: 在block的y维上第几thread,
+=======
+    前四列是用户调用kernel时设置的block个数 4（1，4）thread个数 128（32, 4) 共计512个线程，每个线程中该数固定。
+
+    gradDim.x 描述block 在x维上的个数； gradDim.y 描述block 在y维上的个数； 
+    blcokDim.x 描述每个block 的x维上thread的个数；blockDim.y 描述每个block 的y维上thread的个数；
+
+    第五列代表当前线程计算的是全局的第几个thread;
+    
+    第六到九列分别描述当前线程blockIdx.x: 在grid 的x维上第几个block, blockIdx.y: grid的y维上第几个块，
+                          threadIdx.x: 在block 的x维上第几个thread，threadIdx.y: 在block的y维上第几thread,
+>>>>>>> b47864458a8c315a0f6aace10ded33296bccb9e6
 
 ```c++
     const unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -176,6 +203,7 @@ blcokDim.x 描述每个block 的x维上thread的个数；blockDim.y 描述每个
 ```c++
     const unsigned int thread_idx = ((gridDim.x * blockDim.x) * idy) + idx ;
 ```
+<<<<<<< HEAD
 编译命令 
 ```bash
 nvcc my_id_dim2.cu -o my_id_dim2
@@ -185,6 +213,9 @@ nvcc my_id_dim2.cu -o my_id_dim2
 ./my_id_dim2
 ```
 运行结果
+=======
+
+>>>>>>> b47864458a8c315a0f6aace10ded33296bccb9e6
 ```bash
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread   0 - block_x  0 -  block_y  0- threadid_x  0 -  threadid_y  0 - thread_x  0 - thread_y  0 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread   1 - block_x  0 -  block_y  0- threadid_x  1 -  threadid_y  0 - thread_x  1 - thread_y  1 
