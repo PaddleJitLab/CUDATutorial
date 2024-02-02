@@ -27,7 +27,7 @@
 + [Reduce 性能优化实践](/optimize_reduce)
 + [Reduce 性能优化实践—交叉寻址](/optimize_reduce/interleaved_addressing)
 + [Reduce 性能优化实践—解决 Bank Conflict](/optimize_reduce/bank_conflict)
-+ [Reduce 性能优化实践—解决空闲线程](/optimize_reduce/idle_thread)
++ [Reduce 性能优化实践—解决空闲线程](/optimize_reduce/idle_thread_free)
 + [Reduce 性能优化实践—展开最后一个 warp](/optimize_reduce/unroll)
 
 
