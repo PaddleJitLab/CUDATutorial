@@ -4,12 +4,12 @@
 
 ## 1. 1维block和1维thread
 
-样例中设置了两个block,每个block中64个线程,  blockDim.x = 64
-blockIdx.x 代表当前线程所在第几个block; 
-threadIdx.x 代表当前现在在当前block中是第几个thread; 
-warp_idx 代表当前线程在当前block中是第几个warp;（warp 会选择相邻的线程号做组合）
-calc_idx 代表当前线程计算的是全局的第几个thread; 
-block的索引 * 每个block的thread个数 + block内的thread索引 计算出全局索引。
+样例中设置了两个block,每个block中64个线程,  blockDim.x = 64, 
+blockIdx.x 代表当前线程所在第几个block;  
+threadIdx.x 代表当前现在在当前block中是第几个thread;  
+warp_idx 代表当前线程在当前block中是第几个warp;（warp 会选择相邻的线程号做组合） 
+calc_idx 代表当前线程计算的是全局的第几个thread;  
+block的索引 * 每个block的thread个数 + block内的thread索引 计算出全局索引。 
 
 ```c++
    const unsigned int thread_idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -164,10 +164,10 @@ cac_thread 127 - block  1 - warp   1 - thread 63
 ```
 ## 2.  2维block和2维thread
 
-一，二列是用户调用kernel时设置的block个数 num_blocks =（1，4）， x 维是1， y维是4；
-三，四列是用户调用kernel时设置的每个block中thread个数 num_threads= （32, 4)  x 维是32， y维是4；
+一，二列是用户调用kernel时设置的block个数 num_blocks =（1，4）， x 维是1， y维是4； 
+三，四列是用户调用kernel时设置的每个block中thread个数 num_threads= （32, 4)  x 维是32， y维是4； 
 
-总的线程数计算为`（gridDim.x * gridDim.y）* （blockDim.x * blockDim.y）` 共计512个线程。
+总的线程数计算为`（gridDim.x * gridDim.y）* （blockDim.x * blockDim.y）` 共计512个线程。 
 
 ```c++
     griddim_x[thread_idx] = gridDim.x; // 1
@@ -176,18 +176,18 @@ cac_thread 127 - block  1 - warp   1 - thread 63
     blockdim_y[thread_idx] = blockDim.y; // 4
 ```
 
-gradDim.x 描述block 在x维上的个数； gradDim.y 描述block 在y维上的个数； 
-blcokDim.x 描述每个block 的x维上thread的个数；blockDim.y 描述每个block 的y维上thread的个数；
+gradDim.x 描述block 在x维上的个数； gradDim.y 描述block 在y维上的个数；  
+blcokDim.x 描述每个block 的x维上thread的个数；blockDim.y 描述每个block 的y维上thread的个数。 
 
-五列描述当前线程计算的是全局的第几个thread;
+五列描述当前线程计算的是全局的第几个thread。
 
 ```c++
     const unsigned int thread_idx = ((gridDim.x * blockDim.x) * idy) + idx ;
 ```
 
-推导过程如下：
-六，七列分别描述当前线程blockIdx.x， blockIdx.y，
-八，九列分别描述当前线程threadIdx.x, threadIdx.y。
+推导过程如下： 
+六，七列分别描述当前线程blockIdx.x， blockIdx.y， 
+八，九列分别描述当前线程threadIdx.x, threadIdx.y。 
 
 ```c++
     blockidx_x[thread_idx] = blockIdx.x;
