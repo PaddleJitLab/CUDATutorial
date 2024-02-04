@@ -4,12 +4,12 @@
 
 ## 1. 1维block和1维thread
 
-样例中设置了两个block,每个block中64个线程,  blockDim.x = 64, 
+样例中设置了两个block,每个block中64个线程,  blockDim.x = 64,  
 blockIdx.x 代表当前线程所在第几个block;  
 threadIdx.x 代表当前现在在当前block中是第几个thread;  
-warp_idx 代表当前线程在当前block中是第几个warp;（warp 会选择相邻的线程号做组合） 
+warp_idx 代表当前线程在当前block中是第几个warp（warp 会选择相邻的线程号做组合）;  
 calc_idx 代表当前线程计算的是全局的第几个thread;  
-block的索引 * 每个block的thread个数 + block内的thread索引 计算出全局索引。 
+block的索引 * 每个block的thread个数 + block内的thread索引 计算出全局索引。  
 
 ```c++
    const unsigned int thread_idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -164,10 +164,10 @@ cac_thread 127 - block  1 - warp   1 - thread 63
 ```
 ## 2.  2维block和2维thread
 
-一，二列是用户调用kernel时设置的block个数 num_blocks =（1，4）， x 维是1， y维是4； 
-三，四列是用户调用kernel时设置的每个block中thread个数 num_threads= （32, 4)  x 维是32， y维是4； 
+一，二列是用户调用kernel时设置的block个数 num_blocks =（1，4）， x 维是1， y维是4；  
+三，四列是用户调用kernel时设置的每个block中thread个数 num_threads= （32, 4)  x 维是32， y维是4；  
 
-总的线程数计算为`（gridDim.x * gridDim.y）* （blockDim.x * blockDim.y）` 共计512个线程。 
+总的线程数计算为`（gridDim.x * gridDim.y）* （blockDim.x * blockDim.y）` 共计512个线程。  
 
 ```c++
     griddim_x[thread_idx] = gridDim.x; // 1
@@ -176,18 +176,18 @@ cac_thread 127 - block  1 - warp   1 - thread 63
     blockdim_y[thread_idx] = blockDim.y; // 4
 ```
 
-gradDim.x 描述block 在x维上的个数； gradDim.y 描述block 在y维上的个数；  
-blcokDim.x 描述每个block 的x维上thread的个数；blockDim.y 描述每个block 的y维上thread的个数。 
+gradDim.x 描述block 在x维上的个数； gradDim.y 描述block 在y维上的个数；   
+blcokDim.x 描述每个block 的x维上thread的个数；blockDim.y 描述每个block 的y维上thread的个数。  
 
-五列描述当前线程计算的是全局的第几个thread。
+五列描述当前线程计算的是全局的第几个thread。  
 
 ```c++
     const unsigned int thread_idx = ((gridDim.x * blockDim.x) * idy) + idx ;
 ```
 
 推导过程如下： 
-六，七列分别描述当前线程blockIdx.x， blockIdx.y， 
-八，九列分别描述当前线程threadIdx.x, threadIdx.y。 
+六，七列分别描述当前线程blockIdx.x， blockIdx.y，  
+八，九列分别描述当前线程threadIdx.x, threadIdx.y。  
 
 ```c++
     blockidx_x[thread_idx] = blockIdx.x;
@@ -196,12 +196,12 @@ blcokDim.x 描述每个block 的x维上thread的个数；blockDim.y 描述每个
     threadid_y[thread_idx] = threadIdx.y;
 ```
 
-blockIdx.x: 在grid 的x维上第几个block, blockIdx.y: grid的y维上第几个块；
-threadIdx.x: 在block 的x维上第几个thread，threadIdx.y: 在block的y维上第几thread。
+blockIdx.x: 在grid 的x维上第几个block, blockIdx.y: grid的y维上第几个块；  
+threadIdx.x: 在block 的x维上第几个thread，threadIdx.y: 在block的y维上第几thread。  
 
-十，十一列计算了当前线程在grid 的x维上第几个thread（idx）, 在grid 的y维上第几个thread（idy), 
+十，十一列计算了当前线程在grid 的x维上第几个thread（idx）, 在grid 的y维上第几个thread（idy),  
 
-计算方式为当前线程在grid中（x/y）维第几个block * 每个block（x/y维）的线程个数 + 在当前block 中（x/y)维第几个线程。
+计算方式为当前线程在grid中（x/y）维第几个block * 每个block（x/y维）的线程个数 + 在当前block 中（x/y)维第几个线程。  
 ```c++
     const unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;
     const unsigned int idy = blockIdx.y * blockDim.y + threadIdx.y;
@@ -210,7 +210,7 @@ threadIdx.x: 在block 的x维上第几个thread，threadIdx.y: 在block的y维�
     thread_y[thread_idx] = idy;
 ```
 
-由此可推导全局的索引 = 每行的thread 数 * 行数 + 单行的列偏移
+由此可推导全局的索引 = 每行的thread 数 * 行数 + 单行的列偏移  
 
 ```c++
     const unsigned int thread_idx = ((gridDim.x * blockDim.x) * idy) + idx ;
@@ -261,6 +261,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  28 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  29 - blockidx_x  0 -  blockidx_y  0- threadid_x 29 -  threadid_y  0 - thread_x 29 - thread_y  0 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  30 - blockidx_x  0 -  blockidx_y  0- threadid_x 30 -  threadid_y  0 - thread_x 30 - thread_y  0 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  31 - blockidx_x  0 -  blockidx_y  0- threadid_x 31 -  threadid_y  0 - thread_x 31 - thread_y  0 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  32 - blockidx_x  0 -  blockidx_y  0- threadid_x  0 -  threadid_y  1 - thread_x  0 - thread_y  1 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  33 - blockidx_x  0 -  blockidx_y  0- threadid_x  1 -  threadid_y  1 - thread_x  1 - thread_y  1 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  34 - blockidx_x  0 -  blockidx_y  0- threadid_x  2 -  threadid_y  1 - thread_x  2 - thread_y  1 
@@ -293,6 +294,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  60 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  61 - blockidx_x  0 -  blockidx_y  0- threadid_x 29 -  threadid_y  1 - thread_x 29 - thread_y  1 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  62 - blockidx_x  0 -  blockidx_y  0- threadid_x 30 -  threadid_y  1 - thread_x 30 - thread_y  1 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  63 - blockidx_x  0 -  blockidx_y  0- threadid_x 31 -  threadid_y  1 - thread_x 31 - thread_y  1 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  64 - blockidx_x  0 -  blockidx_y  0- threadid_x  0 -  threadid_y  2 - thread_x  0 - thread_y  2 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  65 - blockidx_x  0 -  blockidx_y  0- threadid_x  1 -  threadid_y  2 - thread_x  1 - thread_y  2 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  66 - blockidx_x  0 -  blockidx_y  0- threadid_x  2 -  threadid_y  2 - thread_x  2 - thread_y  2 
@@ -325,6 +327,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  92 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  93 - blockidx_x  0 -  blockidx_y  0- threadid_x 29 -  threadid_y  2 - thread_x 29 - thread_y  2 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  94 - blockidx_x  0 -  blockidx_y  0- threadid_x 30 -  threadid_y  2 - thread_x 30 - thread_y  2 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  95 - blockidx_x  0 -  blockidx_y  0- threadid_x 31 -  threadid_y  2 - thread_x 31 - thread_y  2 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  96 - blockidx_x  0 -  blockidx_y  0- threadid_x  0 -  threadid_y  3 - thread_x  0 - thread_y  3 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  97 - blockidx_x  0 -  blockidx_y  0- threadid_x  1 -  threadid_y  3 - thread_x  1 - thread_y  3 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread  98 - blockidx_x  0 -  blockidx_y  0- threadid_x  2 -  threadid_y  3 - thread_x  2 - thread_y  3 
@@ -357,6 +360,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 124 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 125 - blockidx_x  0 -  blockidx_y  0- threadid_x 29 -  threadid_y  3 - thread_x 29 - thread_y  3 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 126 - blockidx_x  0 -  blockidx_y  0- threadid_x 30 -  threadid_y  3 - thread_x 30 - thread_y  3 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 127 - blockidx_x  0 -  blockidx_y  0- threadid_x 31 -  threadid_y  3 - thread_x 31 - thread_y  3 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 128 - blockidx_x  0 -  blockidx_y  1- threadid_x  0 -  threadid_y  0 - thread_x  0 - thread_y  4 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 129 - blockidx_x  0 -  blockidx_y  1- threadid_x  1 -  threadid_y  0 - thread_x  1 - thread_y  4 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 130 - blockidx_x  0 -  blockidx_y  1- threadid_x  2 -  threadid_y  0 - thread_x  2 - thread_y  4 
@@ -389,6 +393,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 156 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 157 - blockidx_x  0 -  blockidx_y  1- threadid_x 29 -  threadid_y  0 - thread_x 29 - thread_y  4 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 158 - blockidx_x  0 -  blockidx_y  1- threadid_x 30 -  threadid_y  0 - thread_x 30 - thread_y  4 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 159 - blockidx_x  0 -  blockidx_y  1- threadid_x 31 -  threadid_y  0 - thread_x 31 - thread_y  4 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 160 - blockidx_x  0 -  blockidx_y  1- threadid_x  0 -  threadid_y  1 - thread_x  0 - thread_y  5 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 161 - blockidx_x  0 -  blockidx_y  1- threadid_x  1 -  threadid_y  1 - thread_x  1 - thread_y  5 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 162 - blockidx_x  0 -  blockidx_y  1- threadid_x  2 -  threadid_y  1 - thread_x  2 - thread_y  5 
@@ -421,6 +426,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 188 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 189 - blockidx_x  0 -  blockidx_y  1- threadid_x 29 -  threadid_y  1 - thread_x 29 - thread_y  5 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 190 - blockidx_x  0 -  blockidx_y  1- threadid_x 30 -  threadid_y  1 - thread_x 30 - thread_y  5 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 191 - blockidx_x  0 -  blockidx_y  1- threadid_x 31 -  threadid_y  1 - thread_x 31 - thread_y  5 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 192 - blockidx_x  0 -  blockidx_y  1- threadid_x  0 -  threadid_y  2 - thread_x  0 - thread_y  6 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 193 - blockidx_x  0 -  blockidx_y  1- threadid_x  1 -  threadid_y  2 - thread_x  1 - thread_y  6 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 194 - blockidx_x  0 -  blockidx_y  1- threadid_x  2 -  threadid_y  2 - thread_x  2 - thread_y  6 
@@ -453,6 +459,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 220 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 221 - blockidx_x  0 -  blockidx_y  1- threadid_x 29 -  threadid_y  2 - thread_x 29 - thread_y  6 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 222 - blockidx_x  0 -  blockidx_y  1- threadid_x 30 -  threadid_y  2 - thread_x 30 - thread_y  6 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 223 - blockidx_x  0 -  blockidx_y  1- threadid_x 31 -  threadid_y  2 - thread_x 31 - thread_y  6 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 224 - blockidx_x  0 -  blockidx_y  1- threadid_x  0 -  threadid_y  3 - thread_x  0 - thread_y  7 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 225 - blockidx_x  0 -  blockidx_y  1- threadid_x  1 -  threadid_y  3 - thread_x  1 - thread_y  7 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 226 - blockidx_x  0 -  blockidx_y  1- threadid_x  2 -  threadid_y  3 - thread_x  2 - thread_y  7 
@@ -485,6 +492,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 252 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 253 - blockidx_x  0 -  blockidx_y  1- threadid_x 29 -  threadid_y  3 - thread_x 29 - thread_y  7 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 254 - blockidx_x  0 -  blockidx_y  1- threadid_x 30 -  threadid_y  3 - thread_x 30 - thread_y  7 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 255 - blockidx_x  0 -  blockidx_y  1- threadid_x 31 -  threadid_y  3 - thread_x 31 - thread_y  7 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 256 - blockidx_x  0 -  blockidx_y  2- threadid_x  0 -  threadid_y  0 - thread_x  0 - thread_y  8 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 257 - blockidx_x  0 -  blockidx_y  2- threadid_x  1 -  threadid_y  0 - thread_x  1 - thread_y  8 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 258 - blockidx_x  0 -  blockidx_y  2- threadid_x  2 -  threadid_y  0 - thread_x  2 - thread_y  8 
@@ -517,6 +525,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 284 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 285 - blockidx_x  0 -  blockidx_y  2- threadid_x 29 -  threadid_y  0 - thread_x 29 - thread_y  8 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 286 - blockidx_x  0 -  blockidx_y  2- threadid_x 30 -  threadid_y  0 - thread_x 30 - thread_y  8 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 287 - blockidx_x  0 -  blockidx_y  2- threadid_x 31 -  threadid_y  0 - thread_x 31 - thread_y  8 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 288 - blockidx_x  0 -  blockidx_y  2- threadid_x  0 -  threadid_y  1 - thread_x  0 - thread_y  9 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 289 - blockidx_x  0 -  blockidx_y  2- threadid_x  1 -  threadid_y  1 - thread_x  1 - thread_y  9 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 290 - blockidx_x  0 -  blockidx_y  2- threadid_x  2 -  threadid_y  1 - thread_x  2 - thread_y  9 
@@ -549,6 +558,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 316 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 317 - blockidx_x  0 -  blockidx_y  2- threadid_x 29 -  threadid_y  1 - thread_x 29 - thread_y  9 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 318 - blockidx_x  0 -  blockidx_y  2- threadid_x 30 -  threadid_y  1 - thread_x 30 - thread_y  9 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 319 - blockidx_x  0 -  blockidx_y  2- threadid_x 31 -  threadid_y  1 - thread_x 31 - thread_y  9 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 320 - blockidx_x  0 -  blockidx_y  2- threadid_x  0 -  threadid_y  2 - thread_x  0 - thread_y 10 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 321 - blockidx_x  0 -  blockidx_y  2- threadid_x  1 -  threadid_y  2 - thread_x  1 - thread_y 10 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 322 - blockidx_x  0 -  blockidx_y  2- threadid_x  2 -  threadid_y  2 - thread_x  2 - thread_y 10 
@@ -581,6 +591,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 348 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 349 - blockidx_x  0 -  blockidx_y  2- threadid_x 29 -  threadid_y  2 - thread_x 29 - thread_y 10 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 350 - blockidx_x  0 -  blockidx_y  2- threadid_x 30 -  threadid_y  2 - thread_x 30 - thread_y 10 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 351 - blockidx_x  0 -  blockidx_y  2- threadid_x 31 -  threadid_y  2 - thread_x 31 - thread_y 10 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 352 - blockidx_x  0 -  blockidx_y  2- threadid_x  0 -  threadid_y  3 - thread_x  0 - thread_y 11 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 353 - blockidx_x  0 -  blockidx_y  2- threadid_x  1 -  threadid_y  3 - thread_x  1 - thread_y 11 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 354 - blockidx_x  0 -  blockidx_y  2- threadid_x  2 -  threadid_y  3 - thread_x  2 - thread_y 11 
@@ -613,6 +624,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 380 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 381 - blockidx_x  0 -  blockidx_y  2- threadid_x 29 -  threadid_y  3 - thread_x 29 - thread_y 11 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 382 - blockidx_x  0 -  blockidx_y  2- threadid_x 30 -  threadid_y  3 - thread_x 30 - thread_y 11 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 383 - blockidx_x  0 -  blockidx_y  2- threadid_x 31 -  threadid_y  3 - thread_x 31 - thread_y 11 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 384 - blockidx_x  0 -  blockidx_y  3- threadid_x  0 -  threadid_y  0 - thread_x  0 - thread_y 12 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 385 - blockidx_x  0 -  blockidx_y  3- threadid_x  1 -  threadid_y  0 - thread_x  1 - thread_y 12 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 386 - blockidx_x  0 -  blockidx_y  3- threadid_x  2 -  threadid_y  0 - thread_x  2 - thread_y 12 
@@ -645,6 +657,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 412 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 413 - blockidx_x  0 -  blockidx_y  3- threadid_x 29 -  threadid_y  0 - thread_x 29 - thread_y 12 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 414 - blockidx_x  0 -  blockidx_y  3- threadid_x 30 -  threadid_y  0 - thread_x 30 - thread_y 12 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 415 - blockidx_x  0 -  blockidx_y  3- threadid_x 31 -  threadid_y  0 - thread_x 31 - thread_y 12 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 416 - blockidx_x  0 -  blockidx_y  3- threadid_x  0 -  threadid_y  1 - thread_x  0 - thread_y 13 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 417 - blockidx_x  0 -  blockidx_y  3- threadid_x  1 -  threadid_y  1 - thread_x  1 - thread_y 13 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 418 - blockidx_x  0 -  blockidx_y  3- threadid_x  2 -  threadid_y  1 - thread_x  2 - thread_y 13 
@@ -677,6 +690,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 444 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 445 - blockidx_x  0 -  blockidx_y  3- threadid_x 29 -  threadid_y  1 - thread_x 29 - thread_y 13 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 446 - blockidx_x  0 -  blockidx_y  3- threadid_x 30 -  threadid_y  1 - thread_x 30 - thread_y 13 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 447 - blockidx_x  0 -  blockidx_y  3- threadid_x 31 -  threadid_y  1 - thread_x 31 - thread_y 13 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 448 - blockidx_x  0 -  blockidx_y  3- threadid_x  0 -  threadid_y  2 - thread_x  0 - thread_y 14 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 449 - blockidx_x  0 -  blockidx_y  3- threadid_x  1 -  threadid_y  2 - thread_x  1 - thread_y 14 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 450 - blockidx_x  0 -  blockidx_y  3- threadid_x  2 -  threadid_y  2 - thread_x  2 - thread_y 14 
@@ -709,6 +723,7 @@ graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 476 - bl
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 477 - blockidx_x  0 -  blockidx_y  3- threadid_x 29 -  threadid_y  2 - thread_x 29 - thread_y 14 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 478 - blockidx_x  0 -  blockidx_y  3- threadid_x 30 -  threadid_y  2 - thread_x 30 - thread_y 14 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 479 - blockidx_x  0 -  blockidx_y  3- threadid_x 31 -  threadid_y  2 - thread_x 31 - thread_y 14 
+
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 480 - blockidx_x  0 -  blockidx_y  3- threadid_x  0 -  threadid_y  3 - thread_x  0 - thread_y 15 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 481 - blockidx_x  0 -  blockidx_y  3- threadid_x  1 -  threadid_y  3 - thread_x  1 - thread_y 15 
 graddim_x  1 - graddim_y  4 - blockdim_x 32 - blockdim_y  4 -cac_thread 482 - blockidx_x  0 -  blockidx_y  3- threadid_x  2 -  threadid_y  3 - thread_x  2 - thread_y 15 
