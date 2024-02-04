@@ -1,0 +1,42 @@
+name: Check the deployment of the web
+permissions: write-all
+
+on:
+  pull_request:
+    branches:
+      - develop
+
+jobs:
+  merge-to-docs:
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout Repository
+      uses: actions/checkout@v2
+      with:
+        fetch-depth: 0
+
+    - name: Merge to Docs Branch
+      run: |
+        git config user.name "andsonder"
+        git config user.email "changlu@keter.top"
+        git config pull.rebase false
+        git remote set-url origin "https://github-actions:${{ secrets.SONDER_TOKEN }}@github.com/PaddleJitLab/CUDATutorial.git"
+        git remote -v
+        git fetch --all
+        git pull origin develop --allow-unrelated-histories --no-edit
+        git checkout -b docs origin/docs
+        git pull origin docs --allow-unrelated-histories --no-edit
+        git pull origin develop --allow-unrelated-histories --no-edit
+        git merge --no-ff ${{ github.event.pull_request.head.sha }} -m "Merge latest commit from PR"
+    
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: 21
+
+    - name: Install dependencies
+      run: npm install
+
+    - name: Build
+      run: npm build
