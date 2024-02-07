@@ -12,7 +12,7 @@
 + [手写第一个 Kernel](/first_kernel)
 + [nvprof 性能分析](/nvprof_usage)
 + [尝试第一次优化 Kernel](/first_refine_kernel)
-+ [打印线程号相关信息](/what_my_id)
++ [了解cuda线程分布](/what_my_id)
 
 
 ### 初阶系列
@@ -29,6 +29,18 @@
 + [Reduce 性能优化实践—解决 Bank Conflict](/optimize_reduce/bank_conflict)
 + [Reduce 性能优化实践—解决空闲线程](/optimize_reduce/idle_threads_free)
 + [Reduce 性能优化实践—展开最后一个 warp](/optimize_reduce/unroll)
++ [GEMM 优化专题-二维 Thread Tile 并行优化](/gemm_optimize/2dtiled)
++ [GEMM 优化专题-向量化 Shared Memory 和 Global Memory 访问](/gemm_optimize/vectorize_smem_and_gmem_accesses)
++ [GEMM 优化专题-warp tiling](/gemm_optimize/warptiling)
++ [GEMM 优化专题-双缓冲](/gemm_optimize/double_buffer)
++ [GEMM 优化专题-解决 Bank Conflict](/gemm_optimize/bank_conflicts)
++ [卷积算子优化专题-卷积算子简易实现](/convolution/naive_conv)
++ [卷积算子优化专题-卷积算子优化思路介绍](/convolution/intro_conv_optimize)
++ [卷积算子优化专题-im2col + gemm 实现卷积](/convolution/im2col_conv)
++ [卷积算子优化专题-隐式 GEMM 实现卷积](/convolution/implicit_gemm)
++ [卷积算子优化专题-CUTLASS 中的卷积优化策略](/convolution/cutlass_conv)
+
+
 
 
 ### 高阶系列
