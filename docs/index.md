@@ -12,8 +12,7 @@
 + [手写第一个 Kernel](/first_kernel)
 + [nvprof 性能分析](/nvprof_usage)
 + [尝试第一次优化 Kernel](/first_refine_kernel)
-+ [了解cuda线程分布](/what_my_id)
-
++ [打印线程号相关信息](/what_my_id)
 
 ### 初阶系列
 
@@ -42,7 +41,6 @@
 
 
 
-
 ### 高阶系列
 
 + 页锁定和主机内存
@@ -51,5 +49,5 @@
 + ...(补充中)
 
 ### 大师系列
-
 我现在还不知道写啥，毕竟我现在还是菜鸡~~
+
