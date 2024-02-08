@@ -1,6 +1,6 @@
 #include <stdio.h>
-#include <cassert>
 #include <cuda_runtime.h>
+#include <cassert>
 
 #define CEIL_DIV(M, N) (((M) + (N)-1) / (N))
 
@@ -23,8 +23,8 @@ void sgemm_naive_cpu(float *A, float *B, float *C, int M, int N, int K)
 // Template parameters:
 // BM, BN, BK: dimensions of the block
 // TM: number of threads per block
-template <const int BM, const int BN, const int BK, const int TM>
-__global__ void sgemm_blocktiling_2d_kernel(float *A, float *B, float *C, int M, int N, int K)
+template <const int BM, const int BN, const int BK, const int TM, const int TN>
+__global__ void __launch_bounds__((BM * BN) / (TM * TN), 1) sgemm_blocktiling_2d_kernel(float *A, float *B, float *C, int M, int N, int K)
 {
     // Block index
     const uint c_row = blockIdx.y;
@@ -32,10 +32,10 @@ __global__ void sgemm_blocktiling_2d_kernel(float *A, float *B, float *C, int M,
 
     // Thread index within the block
     const uint thread_col = threadIdx.x % (BN / TN);
-    const uint thread_row = threadIdx.x / (BN / BN);
+    const uint thread_row = threadIdx.x / (BN / TN);
 
     // Size of the 2D tile (block tile)
-    const uint total_results_block_tile = BM * BK;
+    const uint total_results_block_tile = BM * BN;
     // Number of threads needed for a block tile
     const uint number_threads_block_tile = total_results_block_tile / (TM * TN);
 
@@ -53,8 +53,8 @@ __global__ void sgemm_blocktiling_2d_kernel(float *A, float *B, float *C, int M,
     const uint stride_B = number_threads_block_tile / BN;
 
     // Shared memory for matrix A and B
-    __shared__ float smem_A[TM * K];
-    __shared__ float smem_B[K * TN];
+    __shared__ float smem_A[BM * BK];
+    __shared__ float smem_B[BN * BK];
 
     // Initialize thread results and register arrays
     float thread_results[TM * TN] = {0.0};
@@ -67,21 +67,25 @@ __global__ void sgemm_blocktiling_2d_kernel(float *A, float *B, float *C, int M,
     C += c_row * BM * N + c_col * BN;
 
     // Outer loop
-    for (uint bkIdx = 0; bkIdx < K; bkIdx += BK)
+    for (uint bk_idx = 0; bk_idx < K; bk_idx += BK)
     {
         // Load matrix A and B into shared memory
         for (uint load_offset = 0; load_offset < BM; load_offset += stride_A)
         {
-            smem_A[(inner_row_A + load_offset) * BK + inner_col_A] = A[load_offset * K + inner_col_A];
+            smem_A[(inner_row_A + load_offset) * BK + inner_col_A] = A[(inner_row_A + load_offset) * K + inner_col_A];
         }
 
-        for (uint load_offset = 0; load_offset < BN; load_offset += stride_B)
+        for (uint load_offset = 0; load_offset < BK; load_offset += stride_B)
         {
-            smem_B[(inner_row_B + load_offset) * BN + inner_col_B] = B[load_offset * N + inner_col_B];
+            smem_B[(inner_row_B + load_offset) * BN + inner_col_B] = B[(inner_row_B + load_offset) * N + inner_col_B];
         }
 
         // Synchronize threads in the block
         __syncthreads();
+
+        // advance the pointers
+        A += BK;
+        B += BK * N;
 
         // Compute dot product
         for (uint dot_idx = 0; dot_idx < BK; ++dot_idx)
@@ -121,7 +125,7 @@ __global__ void sgemm_blocktiling_2d_kernel(float *A, float *B, float *C, int M,
     }
 }
 
-void run_sgemm_blocktiling_1d(float *A, float *B, float *C, int m, int n, int k)
+void run_sgemm_blocktiling_2d(float *A, float *B, float *C, int m, int n, int k)
 {
     const uint BK = 8;
     const uint TM = 8;
@@ -154,11 +158,11 @@ void randomize_matrix(float *mat, int N)
     }
 }
 
-int main()
+int main(int argc, char *argv[])
 {
-    int m = 256;
-    int n = 256;
-    int k = 256;
+    int m = atoi(argv[1]);
+    int n = atoi(argv[2]);
+    int k = atoi(argv[3]);
 
     // Allocate memory for matrices
     float *A, *B, *C, *C_ref;
@@ -191,7 +195,7 @@ int main()
     cudaMemcpy(d_C, C, m * n * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_C_ref, C_ref, m * n * sizeof(float), cudaMemcpyHostToDevice);
 
-    run_sgemm_blocktiling_1d(d_A, d_B, d_C, m, n, k);
+    run_sgemm_blocktiling_2d(d_A, d_B, d_C, m, n, k);
 
     // Copy result to host
     cudaMemcpy(C, d_C, m * n * sizeof(float), cudaMemcpyDeviceToHost);

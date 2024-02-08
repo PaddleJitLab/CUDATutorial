@@ -39,10 +39,10 @@ const uint c_col = blockIdx.x;
 
 // Thread 索引
 const uint thread_col = threadIdx.x % (BN / TN);
-const uint thread_row = threadIdx.x / (BN / BN);
+const uint thread_row = threadIdx.x / (BN / TN);
 
 // 二维 tile (block tile) 的大小
-const uint total_results_block_tile = BM * BK;
+const uint total_results_block_tile = BM * BN;
 // 一个 block tile 需要的线程数量
 const uint number_threads_block_tile = total_results_block_tile / (TM * TN);
 
@@ -67,8 +67,8 @@ const uint stride_B = number_threads_block_tile / BN;
 接下来我们需要定义一些共享内存，线程块的结果和寄存器变量：
 
 ```cpp
-__shared__ float smem_A[TM * K];
-__shared__ float smem_B[K * TN];
+__shared__ float smem_A[BM * BK];
+__shared__ float smem_B[BN * BK];
 
 float thread_results[TM * TN] = {0.0};
 float reg_m[TM] = {0.0};
@@ -88,15 +88,14 @@ for (uint bkIdx = 0; bkIdx < K; bkIdx += BK)
 然后我们需要在内核的外层循环中，将矩阵 A 和矩阵 B 的数据加载到共享内存中
 
 ```cpp
-// 加载矩阵 A 和矩阵 B 到共享内存中
+// Load matrix A and B into shared memory
 for (uint load_offset = 0; load_offset < BM; load_offset += stride_A)
 {
-    smem_A[(inner_row_A + load_offset) * BK + inner_col_A] = A[load_offset * K + inner_col_A];
+    smem_A[(inner_row_A + load_offset) * BK + inner_col_A] = A[(inner_row_A + load_offset) * K + inner_col_A];
 }
-
-for (uint load_offset = 0; load_offset < BN; load_offset += stride_B)
+for (uint load_offset = 0; load_offset < BK; load_offset += stride_B)
 {
-    smem_B[(inner_row_B + load_offset) * BN + inner_col_B] = B[load_offset * N + inner_col_B];
+    smem_B[(inner_row_B + load_offset) * BN + inner_col_B] = B[(inner_row_B + load_offset) * N + inner_col_B];
 }
 
 __syncthreads();
