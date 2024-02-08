@@ -130,24 +130,13 @@ void run_sgemm_blocktiling_2d(float *A, float *B, float *C, int m, int n, int k)
     const uint BK = 8;
     const uint TM = 8;
     const uint TN = 8;
-    if (m >= 128 && n >= 128)
-    {
-        const uint BM = 128;
-        const uint BN = 128;
-        dim3 grid_size(CEIL_DIV(n, BN), CEIL_DIV(m, BM));
-        dim3 block_size((BM * BN) / (TM * TN));
-        sgemm_blocktiling_2d_kernel<BM, BN, BK, TM, TN>
-            <<<grid_size, block_size>>>(A, B, C, m, n, k);
-    }
-    else
-    {
-        const uint BM = 64;
-        const uint BN = 64;
-        dim3 grid_size(CEIL_DIV(n, BN), CEIL_DIV(m, BM));
-        dim3 block_size((BM * BN) / (TM * TN));
-        sgemm_blocktiling_2d_kernel<BM, BN, BK, TM, TN>
-            <<<grid_size, block_size>>>(A, B, C, m, n, k);
-    }
+
+    const uint BM = 64;
+    const uint BN = 64;
+    dim3 grid_size(CEIL_DIV(n, BN), CEIL_DIV(m, BM));
+    dim3 block_size((BM * BN) / (TM * TN));
+    sgemm_blocktiling_2d_kernel<BM, BN, BK, TM, TN>
+        <<<grid_size, block_size>>>(A, B, C, m, n, k);
 }
 
 void randomize_matrix(float *mat, int N)
@@ -214,5 +203,21 @@ int main(int argc, char *argv[])
     }
 
     printf("Success!\n");
+    // Calculate performance
+    cudaEvent_t start, stop;
+    cudaEventCreate(&start);
+    cudaEventCreate(&stop);
+
+    cudaEventRecord(start);
+    for (int i = 0; i < 100; i++)
+    {
+        run_sgemm_blocktiling_2d(d_A, d_B, d_C, m, n, k);
+    }
+    cudaEventRecord(stop);
+    cudaEventSynchronize(stop);
+    float elapsed_time = 0;
+    cudaEventElapsedTime(&elapsed_time, start, stop);
+    float avg_run_time = elapsed_time * 1000 / 100;
+    printf("Average run time: %f us\n", avg_run_time);
     return 0;
 }

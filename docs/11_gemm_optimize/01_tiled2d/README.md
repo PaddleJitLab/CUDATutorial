@@ -172,11 +172,22 @@ nvcc -o sgemm_tiled2d sgemm_tiled2d.cu
 
 ## 3. 性能测试
 
+我们将上该内核的性能和之前的内核进行比较，我们分别计算 256x256、512x512、1024x1024、2048x2048 （Matrix 1、Matrix 2、Matrix 3、Matrix 4、Matrix 5）的矩阵乘法的性能。在 1080Ti 上运行，结果如下：
+ 
 
+| Algorithm | Matrix 1 | Matrix 2 | Matrix 3 | Matrix 4 |
+| --------- | -------- | -------- | -------- | -------- |
+| Naive     | 95.5152  | 724.396  | 28424    | 228681   |
+| 共享内存缓存块    | 40.5293  | 198.374  | 8245.68  | 59048.4  |
+| 一维Thread Tile     | 35.215  | 174.731  | 894.779  | 5880.03  |
+| 二维Thread Tile     | 34.708  | 92.946  | 557.829  | 3509.920  |
 
+## 4. 总结
 
+本文我们介绍了二维 Thread Tile 并行优化方法。我们将矩阵乘法的计算任务分配给了二维线程块，每个线程块负责计算一个小的矩阵块。这样做的好处是可以充分利用共享内存，减少全局内存的访问次数，从而提高矩阵乘法的性能。
 
+## Reference 
 
-
-
-
+1. https://siboehm.com/articles/22/CUDA-MMM
+2. https://space.keter.top/docs/high_performance/GEMM%E4%BC%98%E5%8C%96%E4%B8%93%E9%A2%98/%E4%BA%8C%E7%BB%B4Thread%20Tile%E5%B9%B6%E8%A1%8C%E4%BC%98%E5%8C%96
+3. https://github.com/siboehm/SGEMM_CUDA
