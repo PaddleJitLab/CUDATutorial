@@ -168,6 +168,7 @@ for (uint reg_idx_m = 0; reg_idx_m < TM; ++reg_idx_m)
 
 ```bash
 nvcc -o sgemm_tiled2d sgemm_tiled2d.cu
+./sgemm_tiled2d 256 256 256
 ```
 
 ## 3. 性能测试
