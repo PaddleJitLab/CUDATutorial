@@ -31,7 +31,7 @@
 + [Reduce 性能优化实践—解决空闲线程](./docs/09_optimize_reduce/03_idle_threads_free/README.md)
 + [Reduce 性能优化实践—展开最后一个 warp](./docs/09_optimize_reduce/04_unroll/README.md)
 + [GEMM 优化专题-二维 Thread Tile 并行优化](./docs/11_gemm_optimize/01_tiled2d/README.md)
-+ [GEMM 优化专题-向量化 Shared Memory 和 Global Memory 访问](./docs/11_gemm_optimize/02_vectorize_smem_and_gmem_accesses/README.md)
++ [GEMM 优化专题-向量化访存](./docs/11_gemm_optimize/02_vectorize_smem_and_gmem_accesses/README.md)
 + [GEMM 优化专题-warp tiling](./docs/11_gemm_optimize/03_warptiling/README.md)
 + [GEMM 优化专题-双缓冲](./docs/11_gemm_optimize/04_double_buffer/README.md)
 + [GEMM 优化专题-解决 Bank Conflict](./docs/11_gemm_optimize/05_bank_conflicts/README.md)
