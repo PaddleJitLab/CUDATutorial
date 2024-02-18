@@ -15,7 +15,7 @@
 概括的讲，CUDA C++ 通过允许程序员定义称为 kernel的 C++ 函数来扩展 C++。当调用内核时，由 N 个不同的 CUDA 线程并行执行 N 次，而不是像常规 C++ 函数那样只执行一次。使用 __global__ 声明说明符定义内核，并使用新的 `<<<...>>>` 执行配置（execution configuration）语法指定内核调用时的 CUDA 线程数（请参阅 C++ 语言扩展）。
 
 ### 1.矩阵乘法朴素版
-我们分别从CPU、CUDA编程的视角分别看下 Matmul 的朴素实现，详细的代码可参考：06_impl_matmul。
+我们分别从CPU、CUDA编程的视角分别看下 Matmul 的朴素实现，详细的代码可参考：[06_impl_matmul](../06_impl_matmul/README.md)。
 
 如下是 CPU 版本代码实现，可以看出：
 * 有3层for循环，其中外2层循环分别是对「行」「列」索引的遍历
@@ -161,23 +161,28 @@ __global__ void sgemm_blocktiling_1d_kernel(float *A, float *B, float *C, int M,
 ### 1.CUDA编程模型概述
 从设计目的而言，GPU和 CPU 截然不同。
 
-* CPU 是一种低延迟的设计，有「强大」的 ALU（逻辑运算部件），时钟频率很高，其内核数量较少，专为通用计算而设计，具有复杂的控制单元；Cache很大，一般包含 L1、L2 和 L3 三级高速缓存。其中 L3 可以达到 8MB；
-* GPU 是一种高吞吐的设计，有「大量」的 ALU，具有数百或数千个内核，经过优化，可并行运行大量计算，主要用来处理计算性强而逻辑性不强的计算任务；没有复杂的控制逻辑，没有分支预测等这些组件；Cache 很小，缓存的目的不是保存后面需要访问的数据的，而是为 Thread 提高服务的
+* **CPU 是一种低延迟的设计**，有「强大」的 ALU（逻辑运算部件），时钟频率很高，其内核数量较少，专为通用计算而设计，具有复杂的控制单元；Cache很大，一般包含 L1、L2 和 L3 三级高速缓存。其中 L3 可以达到 8MB；
+* **GPU 是一种高吞吐的设计**，有「大量」的 ALU，具有数百或数千个内核，经过优化，可并行运行大量计算，主要用来处理计算性强而逻辑性不强的计算任务；没有复杂的控制逻辑，没有分支预测等这些组件；Cache 很小，缓存的目的不是保存后面需要访问的数据的，而是为 Thread 提高服务的
 
 GPU 是并行编程模型，和 CPU 的串行编程模型完全不同，导致很多 CPU 上优秀的算法都无法直接映射到 GPU 上，并且 GPU 的结构相当于共享存储式多处理结构，
 
-因此在 GPU 上设计的并行程序与 CPU 上的串行程序具有很大的差异。简单来说，CPU 是一个具有多种功能的优秀领导者。它的优点在于调度、管理、协调能力强，但计算能力一般。而 GPU 相当于一个接受 CPU 调度的 “拥有大量计算能力” 的员工
+因此在 GPU 上设计的并行程序与 CPU 上的串行程序具有很大的差异。**简单来说，CPU 是一个具有多种功能的优秀领导者。它的优点在于调度、管理、协调能力强，但计算能力一般。而 GPU 相当于一个接受 CPU 调度的 “拥有大量计算能力” 的员工。**
 
-![CPU和GPU架构对齐](./images/cgpu_diff.png)
+<p align="center">
+<img src="./images/cgpu_diff.png" width=60%>
+</p>
 
 CUDA 的并行计算分为三层，自顶向下分别为：
-+ 领域层：在「算法设计」时考虑「如何解析数据和函数」；
-+ 逻辑层：在「编程实现」时确保「线程和计算可以正确解决问题」；
-+ 硬件层：通过理解「线程如何映射到核心Core」从而提高性能；
++ **领域层**：在「算法设计」时考虑「如何解析数据和函数」；
++ **逻辑层**：在「编程实现」时确保「线程和计算可以正确解决问题」；
++ **硬件层**：通过理解「线程如何映射到核心Core」从而提高性能；
 
-![GPU 模型](./images/gpu_model.png)
+<p align="center">
+<img src="./images/gpu_model.png" width=75%>
+</p>
 
-CUDA 编程结构和流程，大致可以分为：
+
+**CUDA 编程结构和流程，大致可以分为：**
 1. 申请分配 GPU 内存
 2. 进行CPU → GPU 数据搬运
 3. 调用CUDA Kernel 完成计算
@@ -188,17 +193,19 @@ CUDA 编程结构和流程，大致可以分为：
 CUDA的执行模型中，核函数是一个非常重要的概念，意味着所有的 Thread 运行相同的代码，且每个Thread都有一个唯一的ID，用于计算内存地址和做出控制决策。
 
 <p align="center">
-<img src="./images/kernel_func.png">
+<img src="./images/kernel_func.png" width=70%>
 </p>
 
 <p align="center">
-<img src="./images/exec_model_SM.jpg">
+<img src="./images/exec_model_SM.jpg" width=70%>
 </p>
 
 
-在执行模型中，一个 Kernel 总会对应一个 Grid（要Keep in Mind）。Grid 内的线程在执行时，是以 Warp 来组织的（具体概念下文会阐述）。一个 Warp 包含了 32 个线程且会运行在一个 SM 上（下文也会介绍），Warp 内共享指令。每4个周期执行一条 Warp 指令且由 SM 动态调度（下文会介绍Warp Scheduler）。Warp 的线程组织方式，类似老式织布机的「一排」，织一次有32根线。
+**在执行模型中，一个 Kernel 总会对应一个 Grid（要Keep in Mind）。**
 
-需要注意，Blocks 的执行顺序与它的 BlockIdx无关，而是可能以任意的顺序执行；但是单个Block中的线程却不能以任意顺序执行，它们的执行顺序是warp order（线程束顺序）
+Grid 内的线程在执行时，是以 Warp 来组织的（具体概念下文会阐述）。一个 Warp 包含了 32 个线程且会运行在一个 SM 上（下文也会介绍），Warp 内共享指令。每4个周期执行一条 Warp 指令且由 SM 动态调度（下文会介绍Warp Scheduler）。Warp 的线程组织方式，类似老式织布机的「一排」，织一次有32根线。
+
+**需要注意**，Blocks 的执行顺序与它的 BlockIdx无关，而是可能以任意的顺序执行；但是单个Block中的线程却不能以任意顺序执行，它们的执行顺序是warp order（线程束顺序）
 
 ### 3.线程的层次结构
 
@@ -219,14 +226,14 @@ Block 包含了很多可并行执行的线程，同样可以被组织为一维�
 Block 需要具备「独立执行』的能力：必须可以以『任何顺序』执行它们，同时无论『并行或串行』均可以。 这种独立性的要求让线程块可以在『任意数量的内核之间』，以『任意顺序』来调度，如下图所示，这使程序员能够编写支持处理器核心数量扩展的代码。
 
 <p align="center">
-<img src="./images/block_diff_sm.png" width=60%>
+<img src="./images/block_diff_sm.png" width=50%>
 </p>
 
 
 一个块内的线程可以进行协作，协作通过使用一些共享内存(shared memory)来共享数据或通过同步彼此执行来协调内存访问实现。 更准确地说，可以通过调用 __syncthreads() 内部函数来指定内核中的同步点； __syncthreads() 充当屏障，块中的所有线程必须等待同步，然后才能继续运行。 Shared Memory 给出了一个使用共享内存的例子。 除了 __syncthreads() 之外，Cooperative Groups API 还提供了一组丰富的线程同步示例。
 
 <p align="center">
-<img src="./images/sm_detail.png" width=60%>
+<img src="./images/sm_detail.png" width=50%>
 </p>
 
 
@@ -247,7 +254,7 @@ Block 需要具备「独立执行』的能力：必须可以以『任何顺序�
 我们依然先从 CPU 和 GPU 的对比来看待这个问题。
 
 <p align="center">
-<img src="./images/memory_arch.jpg">
+<img src="./images/memory_arch.jpg" width=75%>
 </p>
 
 
@@ -275,7 +282,7 @@ CUDA里的 shared memory是 Block级别的，所以两件事需要 Keep in Mind�
 ### 5.计算密集&访存密集
 
 <p align="center">
-<img src="./images/thread_mem.png" width=50%>
+<img src="./images/thread_mem.png" width=40%>
 </p>
 
 对于深度学习算子的性能优化主要受2个方面的限制，一个是「硬件资源」的限制，另一个就是「算法层面」的局限性。
@@ -306,9 +313,9 @@ TIO + Tcompute = 208.3333333 + 0.002236962 = 208.3355703 (us).
 
 #### 5.2 Roof-Line
 前面给出的ADD算子是相对简单的，我们可以直接通过分析总时间占比，进而推断算子的瓶颈。但是对于复杂的算子呢？对于复杂的算子通常采用Roof-line进行区分。所谓“Roof-line”，指的就是由计算平台的算力和带宽上限这两个参数所决定的“屋顶”形态，如下图所示:
-* 算力：$\pi$也称为计算平台的性能上限，指的是一个计算平台倾尽全力每秒钟所能完成的浮点运算数。单位是FLOPS or FLOP/s。
-* 带宽：$\beta$也即计算平台的带宽上限，指的是一个计算平台倾尽全力每秒所能完成的内存交换量。单位是Byte/s。
-* 计算强度上限： $I_{max}$两个指标相除即可得到计算平台的计算强度上限。它描述的是在这个计算平台上，单位内存交换最多用来进行多少次计算。单位是FLOPs/Byte。
+* **算力**： $\pi$ **也称为计算平台的性能上限**，指的是一个计算平台倾尽全力每秒钟所能完成的浮点运算数。单位是FLOPS or FLOP/s。
+* **带宽**： $\beta$ **也即计算平台的带宽上限**，指的是一个计算平台倾尽全力每秒所能完成的内存交换量。单位是Byte/s。
+* **计算强度上限**： $I_{max}$ **两个指标相除即可得到计算平台的计算强度上限**。它描述的是在这个计算平台上，单位内存交换最多用来进行多少次计算。单位是FLOPs/Byte。
 
 <p align="center">
 <img src="./images/roof_line.png" width=60%>
@@ -336,7 +343,7 @@ IO 瓶颈算子在总体神经网络模型中的占比较高，像常见 element
 
 
 #### 5.4 计算密集型
-计算瓶颈区域 Compute-Bound。不管模型的计算强度 $I$ 有多大，它的理论性能 $P$ 最大只能等于计算平台的算力$\pi$。当模型的计算强度$I$大于计算平台的计算强度上限 $I_{max}$时，模型在当前计算平台处于 Compute-Bound状态，即模型的理论性能 $P$ 受到计算平台算力 $\pi$的限制，无法与计算强度 $I$成正比。但这其实并不是一件坏事，因为从充分利用计算平台算力的角度上看，此时模型已经 $P$  的利用了计算平台的全部算力。可见，计算平台的算力$\pi$ 越高，模型进入计算瓶颈区域后的理论性能 $P$ 也就越大。
+计算瓶颈区域 Compute-Bound。不管模型的计算强度 $I$ 有多大，它的理论性能 $P$ 最大只能等于计算平台的算力 $\pi$ 。当模型的计算强度 $I$ 大于计算平台的计算强度上限 $I_{max}$ 时，模型在当前计算平台处于 Compute-Bound状态，即模型的理论性能 $P$ 受到计算平台算力 $\pi$ 的限制，无法与计算强度 $I$ 成正比。但这其实并不是一件坏事，因为从充分利用计算平台算力的角度上看，此时模型已经 $P$ 的利用了计算平台的全部算力。可见，计算平台的算力 $\pi$ 越高，模型进入计算瓶颈区域后的理论性能 $P$ 也就越大。
 
 尽管计算瓶颈的算子在总体算子库中的占比较少，但是却起着举足轻重的地位，这是因为这些算子真的很耗时也确实很复杂，例如 conv， 矩阵乘法。注意此处的计算瓶颈影响整体性能是指已经完成算子IO访存的情况下。
 
@@ -369,7 +376,7 @@ CUDA C++ 为熟悉 C++ 编程语言的用户提供了一种可以轻松编写设
 </p>
 
 <p align="center">
-<img src="./images/fsmss_overview.png" width=50%>
+<img src="./images/fsmss_overview.png" width=40%>
 </p>
 
 
@@ -384,15 +391,16 @@ CUDA C++ 为熟悉 C++ 编程语言的用户提供了一种可以轻松编写设
 </p>
 
 
-我们用cudaMalloc()为GPU分配内存，用malloc()为CPU分配内存。除此之外，CUDA还提供了自己独有的机制来分配 host 内存：cudaHostAlloc()。 这个函数和 malloc 的区别是什么呢?
+我们用 cudaMalloc() 为GPU分配内存，用 malloc() 为CPU分配内存。除此之外，CUDA还提供了自己独有的机制来分配 host 内存：cudaHostAlloc()。 这个函数和 malloc 的区别是什么呢?
 
 malloc() 分配的标准的，可分页的主机内存(上面有解释到)；而 cudaHostAlloc()分配的是页锁定的主机内存，也称作固定内存pinned memory，或者不可分页内存。它的一个重要特点是操作系统将不会对这块内存分页并交换到磁盘上，从而保证了内存始终驻留在物理内存中。也正因为如此，操作系统能够安全地使某个应用程序访问该内存的物理地址，因为这块内存将不会被破坏或者重新定位。
 
 由于 GPU 知道内存的「物理地址」，因此就可以使用 DMA 技术来在GPU和CPU之间复制数据。当使用可分页的内存进行复制时(使用malloc)，CUDA驱动程序仍会通过 dram 把数据传给GPU，这时复制操作会执行两遍：第一遍从可分页内存复制一块到临时的页锁定内存，第二遍是再从这个页锁定内存复制到GPU上。当从可分页内存中执行复制时，复制速度将受限制于PCIE总线的传输速度和系统前段速度相对较低的一方。在某些系统中，这些总线在带宽上有着巨大的差异，因此当在GPU和主机之间复制数据时，这种差异会使页锁定主机内存比标准可分页的性能要高大约2倍。即使PCIE的速度与前端总线的速度相等。由于可分页内存需要更多一次的 CPU 参与复制操作，也会带来额外的开销。
 
-当我们在调用cudaMemcpy(dest, src, ...)时，程序会自动检测 dest 或者 src 是否为Pinned Memory，若不是，则会自动将其内容拷入一不可见的Pinned Memory中，然后再进行传输。可以手动指定 Pinned Memory，对应的API为：cudaHostAlloc(address, size, option)分配地址，cudaFreeHost(pointer)释放地址。注意，所谓的Pinned Memory都是在Host端的，而不是Device端。
+当我们在调用 `cudaMemcpy(dest, src, ...)` 时，程序会自动检测 dest 或者 src 是否为Pinned Memory，若不是，则会自动将其内容拷入一不可见的Pinned Memory中，然后再进行传输。可以手动指定 Pinned Memory，对应的API为：cudaHostAlloc(address, size, option)分配地址，cudaFreeHost(pointer)释放地址。注意，所谓的Pinned Memory都是在Host端的，而不是Device端。
 
 那么，在写代码的过程中是否可以把所有的 malloc都替换成cudaHostAlloc()呢？这样也是不对的。
+
 固定内存是一把双刃剑。当时使用固定内存时，虚拟内存的功能就会失去。尤其是在应用程序中使用每个页锁定内存时都需要分配物理内存，而且这些内存不能交换到磁盘上。这将会导致系统内存会很快的被耗尽。因此应用程序在物理内存较少的机器上会运行失败。不仅如此，还会影响系统上其他应用程序的性能。
 
 
@@ -500,16 +508,17 @@ nvcc是一种编译器驱动程序，可简化C++或PTX代码的编译流程：�
 </p>
 
 A100 硬件的架构如上图。其中A100 SM 包含新的第三代Tensor 内核：
-* Registers：每个thread 专用的，这意味着分配给该线程的寄存器对其他线程不可见，编译器做出有关寄存器利用率的决策。
-* L1/Shared memory (SMEM)：每个SM都有一个快速的 on-chip scratched存储器，可用作L1 cache和shared memory。CUDA block中的所有线程可以共享shared memory，并且在给定SM上运行的所有CUDA Block可以共享SM提供的物理内存资源。
-* Read-only memory：每个SM都具 instruction cache，constant memory，texture和RO cache，这对kernel代码是只读的
-* L2 cache：L2 cache在所有SM之间共享，因此每个CUDA block中的每个线程都可以访问该内存。
-* Global memory：这是GPU和位于GPU中的DRAM的帧缓冲区大小。
+* **Registers**：每个thread 专用的，这意味着分配给该线程的寄存器对其他线程不可见，编译器做出有关寄存器利用率的决策。
+*** L1/Shared memory (SMEM)**：每个SM都有一个快速的 on-chip scratched存储器，可用作L1 cache和shared memory。CUDA block中的所有线程可以共享shared memory，并且在给定SM上运行的所有CUDA Block可以共享SM提供的物理内存资源。
+* **Read-only memory**：每个SM都具 instruction cache，constant memory，texture和RO cache，这对kernel代码是只读的
+* **L2 cache**：L2 cache在所有SM之间共享，因此每个CUDA block中的每个线程都可以访问该内存。
+* **Global memory**：这是GPU和位于GPU中的DRAM的帧缓冲区大小。
 <p align="center">
 <img src="./images/A100_SM.jpg" width=70%>
 </p>
 
 从上图可以看出 GA100 的 SM 架构相比 G80 复杂了很多，占地面积也更大。每个 SM 包括 4 个区块，每个区块有独立的 L0 指令缓存、Warp 调度器、分发单元，以及 16384 个 32 位寄存器，这使得每个 SM 可以并行执行 4 组不同指令序列。4 个区块共享 L1 指令缓存和数据缓存、shared memory、纹理单元。
+
 从图中也能看出 INT32 计算单元数量与 FP32 一致，而 FP64 计算单元数量是 FP32 的一半，这在后面峰值计算能力中会有体现。
 
 <p align="center">
@@ -539,7 +548,7 @@ A100 硬件的架构如上图。其中A100 SM 包含新的第三代Tensor 内核
 ### 3.SM和并行执行模型
 如下图是一个SM，保存了传入线程和Block的ID，并且管理线程的执行。里面绿色的小方块实际上都是CUDA Core，我们也可以叫它Streaming Processors (SPs)，这些SPs是真正执行命令的单元，也是GPU最基本的处理单元，在fermi架构开始被叫做 CUDA core。它可以进行浮点（整数）运算，逻辑判断等一些简单操作。除了SP以外，SM中还有指令缓存，L1缓存，共享内存（前面提到过）。
 
-下面我们来详细介绍一下每个SP的相关组成：
+**下面我们来详细介绍一下每个SP的相关组成：**
 * core 也称之为cuda core，主要用来进行FP和INT的计算
 * DP Unit主要是在HPC场景用来进行double precison 计算，而机器学习场景基本上不会用到
 * SFU也是一个计算单元，它主要负责 sine, cosine, log and exponential等函数的计算
@@ -564,15 +573,15 @@ A100 硬件的架构如上图。其中A100 SM 包含新的第三代Tensor 内核
 ### 5.Warp-Level 概念
 按照SIMD模型，SM最小执行单元为 Warp，一个Warp中有多个线程。SM执行单元SPs共享单个指令fetch/dispatch，这些线程将同一个指令应用于不同数据。因此，一个warp中的所有线程将总是具有相同的执行时间。
 
-warp是SM的基本执行单元。一个 Warp包含32个并行thread，这32个thread执行于SIMT(Single-Instruction, Multiple-Thread，单指令多线程)模式。也就是说所有thread执行同一条指令，并且每个thread会使用各自的data执行该指令。
+**warp是SM的基本执行单元。**一个 Warp包含32个并行thread，这32个thread执行于SIMT(Single-Instruction, Multiple-Thread，单指令多线程)模式。也就是说所有thread执行同一条指令，并且每个thread会使用各自的data执行该指令。
 <p align="center">
 <img src="./images/warp_view.jpg">
 </p>
 
 
-一个warp中的线程必然在同一个block中,同一个block不会再两个SM中，也就是block会调用多个warp，如果block的线程数不能整除warp线程数，则最后一个warp没有填满，没填满的warp中的thread是inactive。只要调用warp就会消耗SM资源，只不过有些warp中的线程是inactive。
+**一个warp中的线程必然在同一个block中**，同一个block不会再两个SM中，也就是block会调用多个warp，如果block的线程数不能整除warp线程数，则最后一个warp没有填满，没填满的warp中的thread是inactive。只要调用warp就会消耗SM资源，只不过有些warp中的线程是inactive。
 
-在早期的GPU中，一个SM只能在同一个时刻为单个线程束执行一条指令。随着GPU的发展，在任意时刻，一个SM可以有多个线程束同时执行指令了。但是即使如此，SM中可以同时执行的线程束数量还是小于传入单个SM中Blocks被拆分后的线程束数量。那么，一个自然的问题就是，如果每次SM能够同时执行的线程束仅仅是传入线程束的一个子集的话，为什么我们要传入那么多线程束呢？实际上这样的设计能够让CUDA处理器有效地执行长延迟操作，如全局内存访问，这种操作常常在一个kenerl中出现，但是从全局内存中读取数据其实是很慢的，如果只是等待，那将浪费很多时间。
+**在早期的GPU中，一个SM只能在同一个时刻为单个线程束执行一条指令**。随着GPU的发展，在任意时刻，一个SM可以有多个线程束同时执行指令了。但是即使如此，SM中可以同时执行的线程束数量还是小于传入单个SM中Blocks被拆分后的线程束数量。那么，一个自然的问题就是，如果每次SM能够同时执行的线程束仅仅是传入线程束的一个子集的话，为什么我们要传入那么多线程束呢？实际上这样的设计能够让CUDA处理器有效地执行长延迟操作，如全局内存访问，这种操作常常在一个kenerl中出现，但是从全局内存中读取数据其实是很慢的，如果只是等待，那将浪费很多时间。
 
 于是SM在执行运算的时候采取以下策略：
 在执行一个线程束的过程中，如果这个线程束遇到了长延迟操作，则在等待长延迟操作完成的过程中SM可以抓取其他可以快速的线程束执行，当前一个线程束的长延迟操作结束后继续执行之前未完成的操作。
@@ -584,7 +593,8 @@ warp是SM的基本执行单元。一个 Warp包含32个并行thread，这32个th
 
 这里举一个图例说明这种策略工作的方式，假设在时间的最开始时，SM处理第一个Block中的第一个线程束，我们记它的编号为 `<TB1,W1>` ,其中TB代表BlockId，W代表在该Block中的线程束编号。在运行了6个时间单位后，`<TB1,W1>` 这个线程束突然遭遇了长延迟操作,语句需要等待8个时间单位。于是我们的SM就抓取了可以立即执行的 `<TB2,W1>` 线程束，希望在等待 `<TB1,W1>` 的过程中来运行一些其他线程束的任务来提高效率。不巧的是 `<TB2,W1>`在运行了2个时间单位也遭遇了长延迟操作，需要四个时间单位响应。被逼无奈的SM只好去抓取第三个线程束 `<TB3,W1>` ,这次运气比较好，2个时间单位运行完毕，还有两个时间单位去抓 `<TB3,W2>` 运行，但是`<TB3,W2>`在运行了2个单位也遭遇了长时间延迟操作。好在这个时候最先开始的`<TB1,W1>`已经可以恢复运行了，于是我们又继续运行`<TB1,W1>`直到结束.....后续与之前的大同小异
 
-一个warp中的thread执行相同的指令，有相同的执行时间，如果某一个thread阻塞了，同一个warp的其他thread都会阻塞，因此有了warp divergence。所以warp divergence只会出现在同一个warp中。
+**一个warp中的thread执行相同的指令，有相同的执行时间，如果某一个thread阻塞了，同一个warp的其他thread都会阻塞，因此有了warp divergence。**所以warp divergence只会出现在同一个warp中。
+
 如下例子中，同一个线程束的线程根据编号被分为了奇数线程和偶数线程，但是这样就带了一个问题，所有该线程束中的线程先计算 if 语句中的逻辑运算，于是奇数的线程被激活了并且进行if中的运算，而未被激活的偶数线程只能等待。假设这是一个if else语句，那么轮到else的时候则是未被激活的奇数线程等待，由于当前GPU总是串形的执行不同的路径，因此我们造成了50%的计算资源浪费。
 
 <p align="center">
@@ -599,19 +609,20 @@ warp是SM的基本执行单元。一个 Warp包含32个并行thread，这32个th
 </p>
 
 在上述图例中，if else控制语句将线程束里的8个线程（假定一个线程束里8个线程）分成左4个和右4个，在左4运行A,B,C的时候，右4只能等待；同理在右4运行X，Y的时候左4也只能等待。在结束控制语句以后才能会和起来一起运行Z。这样串形的执行不同路径让左4和右4都等待了一段时间，造成了计算资源的浪费。
-是不是这种if else语句总会造成线程发散呢？其实不是。同一个warp中的thread执行同一操作，如果因为控制流语句（if）进入不同的分支才触发的warp divergence，那么只要避免控制流语句触发即可。也就是将同一分支放入同一warp。也就引入了branch efficiency，代码比较简单的时候，CUDA编译器自动优化代码。如下图，虽然说它也把线程分为了两堆，但是同一个线程束在 if 逻辑运算中得到的是相同的结果，因此同一个线程束要么全部被激活要么全部沉默，不会存在计算资源的浪费。
+
+**是不是这种if else语句总会造成线程发散呢？其实不是。**同一个warp中的thread执行同一操作，如果因为控制流语句（if）进入不同的分支才触发的warp divergence，那么只要避免控制流语句触发即可。也就是将同一分支放入同一warp。也就引入了branch efficiency，代码比较简单的时候，CUDA编译器自动优化代码。如下图，虽然说它也把线程分为了两堆，但是同一个线程束在 if 逻辑运算中得到的是相同的结果，因此同一个线程束要么全部被激活要么全部沉默，不会存在计算资源的浪费。
 
 <p align="center">
 <img src="./images/fix_diverage.png" width=60%>
 </p>
 
 
-warp的context包含三个部分：
+**warp的context包含三个部分：**
 1. Program counter
 2. Register
 3. Shared memory
 
-当一个block得到足够的资源时，就成为active block。block中的warp就称为active warp。active warp又可以被分为下面三类：
+当一个block得到足够的资源时，就成为active block。block中的warp就称为active warp。**active warp又可以被分为下面三类：**
 1. Selected warp 被选中的warp
 2. Stalled warp 没准备好要执行的称为Stalled warp
 3. Eligible warp 没被选中，但是已经做好准备被执行的称为Eligible warp
@@ -629,11 +640,12 @@ SM中warp调度器每个cycle会挑选active warp送去执行。warp是否「适
 
 
 GPU的整个调度结构如上图所示，从左到右依次为 Application Scheduler、Stream Scheduler、Thread-Block Scheduler、Warp Scheduler。
+
 在聊调度之前，我们还是先来重点介绍几个相关的概念：channel、tsg、runlist、pbdma。
-* channel：这是nv driver层的才有的概念，每一个gpu应用程序会创建一个或者多个channel。而channel也是gpu硬件(在gpu context 层面来说)操作的最小单位。
-* tsg：全称为timeslice group，通常情况下一个tsg含有一个或者多个channel，这些channel 共享这个tsg的timeslice。
-* runlist：多个tsg或者channel的集合，gpu硬件就是从runlist上选取channel来进行任务执行。
-* pbdma：全称为pushbuffer dma。push buffer可以简单的理解为一段主机内存，这段内存主要有cpu写然后gpu来读。gpu通过从pushbuffer 里面拿到的数据生成相应的command(也叫methods) 和data(address) 。而上面讲到的channel里面包含有指向pushbuffer的指针。
+* **channel**：这是nv driver层的才有的概念，每一个gpu应用程序会创建一个或者多个channel。而channel也是gpu硬件(在gpu context 层面来说)操作的最小单位。
+* **tsg**：全称为timeslice group，通常情况下一个tsg含有一个或者多个channel，这些channel 共享这个tsg的timeslice。
+* **runlist**：多个tsg或者channel的集合，gpu硬件就是从runlist上选取channel来进行任务执行。
+* **pbdma**：全称为pushbuffer dma。push buffer可以简单的理解为一段主机内存，这段内存主要有cpu写然后gpu来读。gpu通过从pushbuffer 里面拿到的数据生成相应的command(也叫methods) 和data(address) 。而上面讲到的channel里面包含有指向pushbuffer的指针。
 
 <p align="center">
 <img src="./images/channel.png" width=70%>
@@ -657,10 +669,10 @@ GPU的整个调度结构如上图所示，从左到右依次为 Application Sche
 
 
 ### 7.Bank Conflict
-bank 是CUDA中一个重要概念，是内存的访问时一种划分方式，在CPU中，访问某个地址的内存时，为了减少读写内次次数，访问地址并不是随机的，而是一次性访问bank内的内存地址，类似于内存对齐一样，一次性获取到该bank内的所有地址内存，以提高内存带宽利用率，一般CPU认为如果一个程序要访问某个内存地址时，其附近的数据也有很大概率会在接下来会被访问到。
+**bank 是CUDA中一个重要概念，是内存的访问时一种划分方式**，在CPU中，访问某个地址的内存时，为了减少读写内次次数，访问地址并不是随机的，而是一次性访问bank内的内存地址，类似于内存对齐一样，一次性获取到该bank内的所有地址内存，以提高内存带宽利用率，一般CPU认为如果一个程序要访问某个内存地址时，其附近的数据也有很大概率会在接下来会被访问到。
 
 在CUDA中 在理解bank之前，需要了解共享内存，我们复习下「共享内存」的知识：
-shared memory为CUDA中内存模型中的一中内存模式，为一个片上内存，比全局内存（global memory)要快很多，在同一个block内的所有线程都可以访问到该内
+**shared memory为CUDA中内存模型中的一中内存模式，为一个片上内存，比全局内存（global memory)要快很多，在同一个block内的所有线程都可以访问到该内**
 
 存中的数据，与local 或者global内存相比具有高带宽、低延迟的作用。
 为了提高share memory的访问速度 除了在硬件上采用片上内存的方式之外，还采用了很多其他技术。其中为了提高内存带宽，共享内存被划分为相同大小的内存模型，称之为bank，这样就可以将n个地址读写合并成n个独立的bank，这样就有效提高了带宽。
@@ -669,13 +681,14 @@ shared memory为CUDA中内存模型中的一中内存模式，为一个片上内
 <img src="./images/mem_bank.jpg">
 </p>
 
-那什么是 Bank Conflict？
+**那什么是 Bank Conflict？**
 如果在block内多个线程访问的地址落入到同一个bank内，那么就会访问同一个bank就会产生bank conflict，这些访问将是变成串行，在实际开发调式中非常主要bank conflict.
 
 * 上述最右图中part1、part2、part3都会访问到同一个bank，将会产生bank conflict ,造成程序串行化，会发现此时性能会产生严重下降。
-* 对于__shared__ float sData[32][32]数组，如果有多个线程同时访问一个列中的不同数组将会产生bank conflict
+* 对于`__shared__ float sData[32][32]`数组，如果有多个线程同时访问一个列中的不同数组将会产生bank conflict
 * 如果多个线程同时访问同一列中相同的数组元素 不会产生bank conflict，将会出发广播，这是CUDA中唯一的解决方案，在一个warp内访问到相同内存地址，将会将内存广播到其他线程中，同一个warp内访问同一个bank内的不同地址貌似还没看到解决方案。
 * 不同的线程访问不同的bank，不会产生bank conflict
+
 <p align="center">
 <img src="./images/bank_conflict.jpg" width=70%>
 </p>
@@ -769,7 +782,7 @@ __global__ void sgemm_naive(int M, int N, int K, float alpha, const float *A,
 }
 ```
 
-借助理论分析，我们先分析下它是「计算密集型」还是「访存密集型」。
+**借助理论分析，我们先分析下它是「计算密集型」还是「访存密集型」。**
 * Line 11行上，分别在GM上读一次A和B，外加一次FMA（乘累加）
   * GM读取代价很大，通常上需要几百个cycle；依次FMA只需要几个cycle
   * 若将A和B放到shared Mem上，可以将读取降低到几十cycle

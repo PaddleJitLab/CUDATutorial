@@ -10,7 +10,7 @@
 ## 学习路线
 
 ### 预备知识系列
-+ [ CUDA 入门知识概念](./docs/00_cuda_concept/)
++ [ CUDA 入门知识概念](./docs/00_prev_concept/)
 
 ### 新手村系列
 
