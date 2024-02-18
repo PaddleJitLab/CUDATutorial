@@ -495,10 +495,11 @@ A100 硬件的架构如上图。其中A100 SM 包含新的第三代Tensor 内核
 
 ![](./images/GPU_mem_arch.jpg)
 
-![](./images/GPU_mem_feature.png)
+![](./images/gpu_mem_feature.png)
 
 
 ### 3.SM和并行执行模型
+
 如下图是一个SM，保存了传入线程和Block的ID，并且管理线程的执行。里面绿色的小方块实际上都是CUDA Core，我们也可以叫它Streaming Processors (SPs)，这些SPs是真正执行命令的单元，也是GPU最基本的处理单元，在fermi架构开始被叫做 CUDA core。它可以进行浮点（整数）运算，逻辑判断等一些简单操作。除了SP以外，SM中还有指令缓存，L1缓存，共享内存（前面提到过）。
 
 **下面我们来详细介绍一下每个SP的相关组成：**
