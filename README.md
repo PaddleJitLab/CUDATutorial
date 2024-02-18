@@ -5,12 +5,9 @@
 > [!NOTE]
 > 你可以访问 https://cuda.keter.top/ 来访问本仓库的网页版
 
-![memory-hierarcy](./img/memory-hierarchy-in-gpus.png)
+![Overview](./img/kernel-execution-on-gpu.png)
 
 ## 学习路线
-
-### 预备知识系列
-+ [ CUDA 入门知识概念](./docs/00_prev_concept/)
 
 ### 新手村系列
 
@@ -18,7 +15,8 @@
 + [手写第一个 Kernel](./docs/02_first_kernel/)
 + [nvprof 性能分析](./docs/03_nvprof_usage/)
 + [尝试第一次优化 Kernel](./docs/04_first_refine_kernel/)
-+ [了解cuda线程分布](./docs/10_what_my_id/)
++ [了解 CUDA 线程分布](./docs/10_what_my_id/)
++ [CUDA 编程模型](./docs/00_prev_concept/)
 
 ### 初阶系列
 

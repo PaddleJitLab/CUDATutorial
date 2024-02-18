@@ -2,7 +2,7 @@
 
 从零开始学习 CUDA 高性能编程，从入门到放弃，哦不！一起来边学习，边打笔记，日拱一卒！
 
-![memory-hierarcy](./img/memory-hierarchy-in-gpus.png)
+![Overview](./img/kernel-execution-on-gpu.png)
 
 ## 学习路线
 
@@ -13,6 +13,7 @@
 + [nvprof 性能分析](/nvprof_usage)
 + [尝试第一次优化 Kernel](/first_refine_kernel)
 + [打印线程号相关信息](/what_my_id)
++ [CUDA 编程模型](/prev_concept)
 
 ### 初阶系列
 
