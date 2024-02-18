@@ -1,11 +1,15 @@
-# CUDATutorial
+# CUDATutorial 
+![](https://img.shields.io/badge/version-v0.1-brightgreen) ![](https://img.shields.io/badge/docs-latest-brightgreen) ![](https://img.shields.io/badge/PRs-welcome-orange) ![](https://img.shields.io/badge/pre--commit-Yes-brightgreen)
 
 从零开始学习 CUDA 高性能编程，从入门到放弃，哦不！一起来边学习，边打笔记，日拱一卒！
 
 > [!NOTE]
 > 你可以访问 https://cuda.keter.top/ 来访问本仓库的网页版
 
-![Overview](./img/kernel-execution-on-gpu.png)
+<p align="center">
+<img align="center" src="./img/kernel-execution-on-gpu.png" width=75%>
+<p>
+
 
 ## 学习路线
 
