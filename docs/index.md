@@ -6,7 +6,7 @@
 
 ## 学习路线
 
-### 新手村系列
+### 新手村系列 🐸
 
 + [构建 CUDA 编程环境](/build_dev_env)
 + [手写第一个 Kernel](/first_kernel)
@@ -15,13 +15,13 @@
 + [打印线程号相关信息](/what_my_id)
 + [CUDA 编程模型](/prev_concept)
 
-### 初阶系列
+### 初阶系列 ⚔
 
 + [初识多线程并行计算](/intro_parallel)
 + [手写实现矩阵乘 Matmul](/impl_matmul)
 + [矩阵乘 Matmul 性能优化实践](/optimize_matmul)
 
-### 中阶系列
+### 中阶系列 🚀
 
 + [手写实现 Reduce](/impl_reduce)
 + [Reduce 性能优化实践](/optimize_reduce)
@@ -42,13 +42,13 @@
 
 
 
-### 高阶系列
+### 高阶系列 ✈️
 
 + 页锁定和主机内存
 + CUDA 流和多流使用
 + 使用多个 GPU 计算
 + ...(补充中)
 
-### 大师系列
+### 大师系列 💡
 我现在还不知道写啥，毕竟我现在还是菜鸡~~
 
