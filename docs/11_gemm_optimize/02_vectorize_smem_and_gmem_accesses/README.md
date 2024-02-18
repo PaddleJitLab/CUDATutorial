@@ -29,7 +29,7 @@ LDS.128指令可以一次性读取4个float类型的数据。
 
 算法整体流程如下：
 
-![picture 0](images/05eee538f6394ffc2ffffc2947edc8c888175af7152a150d697bfefb47db7a98.png)  
+![picture 0](images/05eee538f6394ffc2ffffc2947edc8c888175af7152a150d697bfefb47db7a98.jpg)  
 
 本 Kerne 和上一个 Kernel 的主要区别就在于如何加载数据到共享内存中。A 矩阵加载过程如下图所示：
 
@@ -184,7 +184,7 @@ nvcc -o sgemm_vectorize sgemm_vectorize.cu
 
 ## 3. 性能对比
 
-我们将上该内核的性能和之前的内核进行比较，我们分别计算 256x256、512x512、1024x1024、2048x2048 （Matrix 1、Matrix 2、Matrix 3、Matrix 4、Matrix 5）的矩阵乘法的性能。在 1080Ti 上运行，结果如下：
+我们将上该内核的性能和之前的内核进行比较，我们分别计算 256x256、512x512、1024x1024、2048x2048 （Matrix 1、Matrix 2、Matrix 3、Matrix 4、Matrix 5）的矩阵乘法的性能 (us)。在 1080Ti 上运行，结果如下：
 
 
 | Algorithm | Matrix 1 | Matrix 2 | Matrix 3 | Matrix 4 |
