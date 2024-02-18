@@ -131,7 +131,7 @@ nvcc -o sgemm_warp_tiling sgemm_warp_tiling.cu
 
 ## 3. 性能对比
 
-我们将上该内核的性能和之前的内核进行比较，我们分别计算 256x256、512x512、1024x1024、2048x2048 （Matrix 1、Matrix 2、Matrix 3、Matrix 4、Matrix 5）的矩阵乘法的性能。在 1080Ti 上运行，结果如下：
+我们将上该内核的性能和之前的内核进行比较，我们分别计算 256x256、512x512、1024x1024、2048x2048 （Matrix 1、Matrix 2、Matrix 3、Matrix 4、Matrix 5）的矩阵乘法的性能 (ns)。在 1080Ti 上运行，结果如下：
 
 
 | Algorithm | Matrix 1 | Matrix 2 | Matrix 3 | Matrix 4 |
