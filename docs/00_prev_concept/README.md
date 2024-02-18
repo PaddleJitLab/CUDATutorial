@@ -495,10 +495,11 @@ A100 硬件的架构如上图。其中A100 SM 包含新的第三代Tensor 内核
 
 ![](./images/GPU_mem_arch.jpg)
 
-![](./images/GPU_mem_feature.png)
+![](./images/gpu_mem_feature.png)
 
 
 ### 3.SM和并行执行模型
+
 如下图是一个SM，保存了传入线程和Block的ID，并且管理线程的执行。里面绿色的小方块实际上都是CUDA Core，我们也可以叫它Streaming Processors (SPs)，这些SPs是真正执行命令的单元，也是GPU最基本的处理单元，在fermi架构开始被叫做 CUDA core。它可以进行浮点（整数）运算，逻辑判断等一些简单操作。除了SP以外，SM中还有指令缓存，L1缓存，共享内存（前面提到过）。
 
 **下面我们来详细介绍一下每个SP的相关组成：**
@@ -596,8 +597,9 @@ GPU的整个调度结构如上图所示，从左到右依次为 Application Sche
 当GPU从runlist中取出channel之后，会生成对应的command和数据，而每个stream里包含了一系列的commands。由于不同应用的stream是可以设置不同的优先级的，所以stream scheduler主要负责不同应用的stream调度和抢占
 
 #### 6.3 Thread Block Scheduler
+
 它主要负责将Thread Block 分发给GPU上的SM，完成Thread Block 与GPU SM之间的一一映射。通常，能不能将一个Kernel的 Thread Block 分发给某个SM，主要看SM的计算能力。
-举个例子，假如一个SM支持 2048个Threads 和 32 个Blocks，如果存在一个Kernel有 64个Threads和64个Blocks（应该是<<<>>>启动参数），则Scheduler也只能选择选取这个Kernel一半的Blocks去运行。
+举个例子，假如一个SM支持 2048个Threads 和 32 个Blocks，如果存在一个Kernel有 64个Threads和64个Blocks，则Scheduler也只能选择选取这个Kernel一半的Blocks去运行。
 
 #### 6.4 Warp Scheduler
 通常情况下，一个Warp包含32个Thread。Warp Scheduler的主要作用是从Warp中获取准备好的「待执行的Instrunction」，并把这些Instrunction分配给SM上的 Dispatch Unit。接着Dispatch Unit会把这些指令发送到SM的 SIMD Core上去执行。
