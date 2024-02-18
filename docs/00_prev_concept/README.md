@@ -597,8 +597,9 @@ GPU的整个调度结构如上图所示，从左到右依次为 Application Sche
 当GPU从runlist中取出channel之后，会生成对应的command和数据，而每个stream里包含了一系列的commands。由于不同应用的stream是可以设置不同的优先级的，所以stream scheduler主要负责不同应用的stream调度和抢占
 
 #### 6.3 Thread Block Scheduler
+
 它主要负责将Thread Block 分发给GPU上的SM，完成Thread Block 与GPU SM之间的一一映射。通常，能不能将一个Kernel的 Thread Block 分发给某个SM，主要看SM的计算能力。
-举个例子，假如一个SM支持 2048个Threads 和 32 个Blocks，如果存在一个Kernel有 64个Threads和64个Blocks（应该是<<<>>>启动参数），则Scheduler也只能选择选取这个Kernel一半的Blocks去运行。
+举个例子，假如一个SM支持 2048个Threads 和 32 个Blocks，如果存在一个Kernel有 64个Threads和64个Blocks，则Scheduler也只能选择选取这个Kernel一半的Blocks去运行。
 
 #### 6.4 Warp Scheduler
 通常情况下，一个Warp包含32个Thread。Warp Scheduler的主要作用是从Warp中获取准备好的「待执行的Instrunction」，并把这些Instrunction分配给SM上的 Dispatch Unit。接着Dispatch Unit会把这些指令发送到SM的 SIMD Core上去执行。
