@@ -9,6 +9,9 @@
 
 ## 学习路线
 
+### 预备知识系列
++ [ CUDA 入门知识概念](./docs/00_prev_concept/)
+
 ### 新手村系列
 
 + [构建 CUDA 编程环境](./docs/01_build_dev_env/)
