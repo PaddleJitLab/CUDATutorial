@@ -73,7 +73,7 @@ int main()
 
     // 计算 block 和 grid 的大小
     const int blocksize = 256;
-    const int gridsize = (len + blocksize - 1) / (blocksize * 2);
+    const int gridsize = (len + blocksize * 2 - 1) / (blocksize * 2);
 
     // 调用 kernel 函数
     reduce_unroll_last_warp<blocksize><<<gridsize, blocksize>>>(d_arr, d_out, len);
