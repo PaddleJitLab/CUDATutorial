@@ -57,7 +57,7 @@ int main()
 
     // Allocate memory for matrices
     float *A, *B, *C, *C_ref;
-    float *d_A, *d_B, *d_C, *d_C_ref;
+    float *d_A, *d_B, *d_C;
 
     A = new float[m * k];
     B = new float[k * n];
@@ -74,17 +74,10 @@ int main()
     cudaMalloc((void **)&d_B, k * n * sizeof(float));
     cudaMalloc((void **)&d_C, m * n * sizeof(float));
 
-    // Copy data to device
-    cudaMalloc((void **)&d_A, m * k * sizeof(float));
-    cudaMalloc((void **)&d_B, k * n * sizeof(float));
-    cudaMalloc((void **)&d_C, m * n * sizeof(float));
-    cudaMalloc((void **)&d_C_ref, m * n * sizeof(float));
-
     // Copy matrices to device
     cudaMemcpy(d_A, A, m * k * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, B, k * n * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_C, C, m * n * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_C_ref, C_ref, m * n * sizeof(float), cudaMemcpyHostToDevice);
 
     // Run naive sgemm
     run_sgemm_naive(d_A, d_B, d_C, m, n, k);
