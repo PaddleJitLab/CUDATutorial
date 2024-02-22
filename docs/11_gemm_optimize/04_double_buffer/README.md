@@ -73,6 +73,9 @@ for (uint bk_idx = 0; bk_idx < K; bk_idx += BK)
     B += BK * N;
 
     // 原来的同步就不要了
+    ...
+
+    write_index = 1 - write_index; // 切换读写指针
 }
 ```
 
