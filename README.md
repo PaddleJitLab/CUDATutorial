@@ -57,3 +57,8 @@
 ### 大师系列 💡
 
 我现在还不知道写啥，毕竟我现在还是菜鸡~~
+
+### LLM 推理技术
+
++ [动态 Batch](./docs/13_dynamic_batch/README.md)
++ [Page Attention](./docs/14_page_attention/README.md)
