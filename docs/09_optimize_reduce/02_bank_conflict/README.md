@@ -46,7 +46,7 @@ sudo ncu --metrics      l1tex__data_bank_conflicts_pipe_lsu_mem_shared_op_st.sum
 
 ![picture 4](images/e69b477993846936b270e82a37615c00424010cd8003f429354aa27325c96f57.png)  
 
-0 号 warp 的 0 号线程访问 0 号 bank 的 0 号地址和 128 号地址，1 号 warp 的 0 号线程访问 1 号 bank 的 1 号地址和 129 号地址，2 号 warp 的 0 号线程访问 2 号 bank 的 2 号地址和 130 号地址，以此类推。
+0 号 warp 的 0 号线程访问 0 号 bank 的 0 号地址和 128 号地址，1 号 warp 的 0 号线程访问 1 号 bank 的 32 号地址和 128 号地址，2 号 warp 的 0 号线程访问 2 号 bank 的 64 号地址和 160号地址，以此类推。
 
 整体过程如下图所示：
 
