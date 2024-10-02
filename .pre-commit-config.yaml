@@ -1,0 +1,9 @@
+repos:
+  - repo: local
+    hooks:
+      - id: lint-md
+        name: lint-md
+        entry: lint-md
+        language: node
+        files: \.md$
+        types: [text]
