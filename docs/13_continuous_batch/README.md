@@ -1,4 +1,4 @@
-# Continuous Batching 
+# 连续批处理
 
 ## 1. LLM 推理
 
@@ -118,9 +118,31 @@ Ocra 中引入了**选择性批处理机制**技术；它在 Attention 操作中
 OCRA 还没考虑 KVCache 内存管理优化，它每个序列预先分配 max token 数的作为 KVCache 显存空间。OCRA 的实验都是按照 max token 来生成。后续的工作也对这点进行了优化，下面我们来看看 vLLM 和 LightLLM 的连续批处理算法。
 
 
+### 3.2 vLLM 中的连续批处理
 
+vLLM[^3] 在 Iteration-level Batching 时候 prefill 和 decoding 是分开的，一个 Batching step 要么处理 decoding 要么处理 prefill。这样实现比 OCRA 更简单了，prefill 直接调用 xformers 处理计算密集的 prefill attention 计算；decoding 手写 CUDA PageAttention 处理访存密集的 Attention 计算
+
+:::note
+
+Page Attention 是一种显存优化技术，我们会在下篇文章中介绍。
+
+:::
+
+
+vLLM 和 ORCA 的不同之处在于，vLLM 将 prefill 和 decoding 两个阶段在迭代级别的批处理（Iteration-level Batching）中分离。在每一个批处理步骤中，vLLM 只处理 prefill 或 decoding，而不是像 ORCA 那样在同一个步骤中处理两个阶段。这使得实现更加简单，尤其是在处理复杂的大模型时。
+
+不过因为 Prefill 过程会抢占 decoding 的 step 前进，如果输入 prompt sequence length 过长，所有 decoding 过程都需要等待，造成大家更长的延迟，因此留下了一些优化空间。
+
+### 3.3 LightLLM 中的连续批处理
+
+LightLLM 通过将长的 prompt request 分解成更小的块，在多个 forward step 中进行调度，从而让每个 forward 的计算量保持均衡。只有当最后一个块的 forward 计算完成后，整个 prompt request 的生成才结束。而短的 prompt request 则可以用精确的 step 填充计算空隙，以确保所有请求的平均延迟更为稳定。这里我们暂时先只介绍一下 LightLLM 中连续批处理的核心思想，后面有机会我们再结合源码来深入了解。
+
+## 4. 总结
+
+连续批处理是一种内存优化技术，它不需要对模型权重进行修改。在大型语言模型（LLM）推理中，连续批处理可以提高 GPU 利用率，减少内存浪费，提高推理效率。Orca 是第一篇解决这个问题的论文，它采用了迭代级调度，其中批大小根据每次迭代确定。vLLM 和 LightLLM 也提出了连续批处理的方法，它们在迭代级别的批处理中分离了 prefill 和 decoding 阶段，以简化实现。
 
 
 
 [^1]: https://www.anyscale.com/blog/continuous-batching-llm-inference
 [^2]: Orca: A Distributed Serving System for Transformer-Based Generative Models
+[^3]: vLLM: https://github.com/vllm-project/vllm

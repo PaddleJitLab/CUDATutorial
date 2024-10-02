@@ -54,6 +54,6 @@
 
 ### LLM 推理技术
 
-+ [动态 Batch](/dynamic_batch)
++ [连续批处理](/continuous_batch)
 + [Page Attention](/page_attention)
 
