@@ -14,7 +14,7 @@ $$
 
 其中，$n$ 表示 batch 的索引，$m$ 表示输出特征图的索引，$i$ 和 $j$ 分别表示输出特征图的高和宽的索引。其中 ih, iw 等坐标计算如下：
 
-```
+```plain
 ih = oh * stride_h + fh - padding_h
 iw = ow * stride_w + fw - padding_w
 ```
@@ -45,7 +45,7 @@ im2col 算法会把输入特征图转换为一个矩阵，然后保存在内存�
 
 根据上面的讨论，我们可以把卷积的运算过程，写成一个隐式矩阵乘法 (Implicit GEMM) 的形式：
 
-```
+```plain
 GEMM_M = OC
 GEMM_N = N * OH * OW
 GEMM_K = IC * FH * FW
