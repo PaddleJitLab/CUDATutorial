@@ -58,7 +58,7 @@
 
 我现在还不知道写啥，毕竟我现在还是菜鸡~~
 
-### LLM 推理技术
+### LLM 推理技术 🤖
 
 + [连续批处理](./docs/13_continuous_batch/README.md)
 + [Page Attention](./docs/14_page_attention/README.md)
