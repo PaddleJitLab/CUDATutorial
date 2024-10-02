@@ -1,0 +1,10 @@
+{
+  "rules":{
+    "no-long-code": [1, {
+      "length": 1000,
+      "exclude": ["dot"]
+    }],
+    "no-space-in-emphasis": [0, {}]
+  }
+}
+
