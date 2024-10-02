@@ -51,9 +51,9 @@ GPU activities:   92.23%  570.25ms        1  570.25ms  570.25ms  570.25ms  add_k
 
 可以看出我们写的 CUDA 程序在 GPU 上主要包括 3 个关键活动：
 
-+ `add_kernel`：即执行 kernel 的时间，占比92%，耗时 570.25 ms
++ `add_kernel`：即执行 kernel 的时间，占比 92%，耗时 570.25 ms
 + HtoD 的内存拷贝：即输入 `x` &rarr; `cuda_x`，`y` &rarr; `cuda_y` 的 2 次拷贝，占比 2.99%，耗时 18.459 ms
-+ DtoH 的内存拷贝：即输出 `cuda_out` &rarr; `out` 的 1次拷贝，占比 4.79%，耗时 29.586ms 
++ DtoH 的内存拷贝：即输出 `cuda_out` &rarr; `out` 的 1 次拷贝，占比 4.79%，耗时 29.586ms 
 
 
 第三个部分是 CUDA API 的具体调用开销，这个是从 API 层面来解读各个阶段的耗时：
@@ -74,7 +74,7 @@ GPU activities:   92.23%  570.25ms        1  570.25ms  570.25ms  570.25ms  add_k
                     0.00%     543ns         1     543ns     543ns     543ns  cuDeviceGetUuid
 ```
 
-其中最耗时的就是 3 次 `cudaMemcpy` 和`cudasMalloc` 的调用，99% 的时间都在干这两个事情，可以看出显存分配是一个比较「重」的操作，任何时候我们都应该尽量避免频繁的显存分配操作。在深度学习框架中，常会借助「内存池」技术一次申请较大的显存块，然后自己管理切分、分配和回收，这样就可以减少向系统 `cudaMalloc` 的次数，感兴趣的同学可以参考[Paddle源码之内存管理技术](https://www.cnblogs.com/CocoML/p/14105729.html)。
+其中最耗时的就是 3 次 `cudaMemcpy` 和`cudasMalloc` 的调用，99% 的时间都在干这两个事情，可以看出显存分配是一个比较「重」的操作，任何时候我们都应该尽量避免频繁的显存分配操作。在深度学习框架中，常会借助「内存池」技术一次申请较大的显存块，然后自己管理切分、分配和回收，这样就可以减少向系统 `cudaMalloc` 的次数，感兴趣的同学可以参考[Paddle 源码之内存管理技术](https://www.cnblogs.com/CocoML/p/14105729.html)。
 
 剩下的 API 调用的开销基本差别不是特别大，大多数都是在 us 级别，我们一一介绍各个 API 的作用：
 

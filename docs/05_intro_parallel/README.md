@@ -4,10 +4,10 @@
 
 这里我们系统性地学习下 CUDA 编程中的 Thread、Block、Grid 的概念。
 
-GPU 上一般包含很多流式处理器 SM，每个 SM 是 CUDA 架构中的基本计算单元，其可分为若干（如2~3）个网格，每个网格内包含若干（如65535）个线程块，每个线程块包含若干（如512）个线程，概要地理解的话：
+GPU 上一般包含很多流式处理器 SM，每个 SM 是 CUDA 架构中的基本计算单元，其可分为若干（如 2~3）个网格，每个网格内包含若干（如 65535）个线程块，每个线程块包含若干（如 512）个线程，概要地理解的话：
 
 + `Thread`: 一个 CUDA Kernel 可以被多个 threads 来执行
-+ `Block`: 多个 threads 会组成一个 Block，而同一个 block 中的 threads 可以同步，也可以通过shared memory通信
++ `Block`: 多个 threads 会组成一个 Block，而同一个 block 中的 threads 可以同步，也可以通过 shared memory 通信
 + `Grid`: 多个 blocks 可以组成一个 Grid
 
 其中，一个 Grid 可以包含多个 Blocks。Blocks 的分布方式可以是一维的，二维，三维的；Block 包含多个 Threads，Threads 的分布方式也可以是一维，二维，三维的。

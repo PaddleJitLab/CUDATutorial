@@ -68,7 +68,7 @@ nvcc reduce_idle_threads_free.cu -o reduce_idle_threads_free
 
 通过本文的实践，我们学习到了如何通过减少空闲线程来提高 GPU 的利用率。
 当程序中有大量的空闲线程时，我们可以让空闲的线程也做一些工作，也可以减少线程的数量。
-下一篇文章中我们会通过展开warp来进一步提高Kernel的性能。
+下一篇文章中我们会通过展开 warp 来进一步提高 Kernel 的性能。
 
 ## Reference
 

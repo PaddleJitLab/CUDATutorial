@@ -3,7 +3,7 @@ repos:
     hooks:
       - id: lint-md
         name: lint-md
-        entry: lint-md
+        entry: lint-md -f
         language: node
         files: \.md$
         types: [text]
