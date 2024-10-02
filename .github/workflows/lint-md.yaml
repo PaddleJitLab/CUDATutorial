@@ -23,10 +23,10 @@ jobs:
       with:
         node-version: '21'
 
-    # Step 3: Install lint-md globally
-    - name: Install lint-md
-      run: npm install -g lint-md
+    # Step 3: Install lint-md-cli
+    - name: Install lint-md-cli
+      run: npm install -g lint-md-cli
 
-    # Step 4: Run lint-md to check Markdown files
+    # Step 4: Run lint-md using npx
     - name: Run lint-md check
-      run: npx lint-md .
+      run: npx lint-md-cli .
