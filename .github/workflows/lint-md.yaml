@@ -1,12 +1,12 @@
 name: Lint Markdown Files
 
 on:
-  push:
-    branches:
-      - develop
   pull_request:
     branches:
-      - develop
+      - main
+  push:
+    branches:
+      - main
 
 jobs:
   lint-md:
@@ -21,12 +21,12 @@ jobs:
     - name: Set up Node.js
       uses: actions/setup-node@v3
       with:
-        node-version: '21'
+        node-version: '16'
 
-    # Step 3: Install dependencies
-    - name: Install dependencies
-      run: npm install
+    # Step 3: Install lint-md globally
+    - name: Install lint-md
+      run: npm install -g lint-md
 
-    # Step 4: Run lint-md
-    - name: Run lint-md
-      run: npx lint-md .
+    # Step 4: Run lint-md to check Markdown files
+    - name: Run lint-md check
+      run: lint-md .
