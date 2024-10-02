@@ -71,7 +71,7 @@ for (int s = 1; s < bdim; s *= 2)
 
 在 `BLOCKSIZE` 为 256 的情况下，一个 block 中分配 256 个线程，32 个线程为一组，绑定在一个 SIMD 单元。所以 256 个线程可以简单地理解为分配了 8 组 SIMD 单元。（但实际的硬件资源分配不是这样，因为一个 SM 的计算资源有限，不可能真的给每一个 block 都分配这么多的 SIMD 单元。）在第 1 次迭代中，warp 的 index 为 0-3 的进入分支，而 4-7 的 warp 的 index 大于等于 blockDim.x。由于每个 warp 都只进入一个分支，因此不存在 warp divergence 的情况。
 
-在第 2 次迭代中，warp 的 index 为 0 和 1 的进入计算分支。在第 3 次迭代中，只有 warp 的 index为 0 的 warp 进入计算分支。而在第 4 次迭代中，仅有 warp 的 index 为 0 的 warp 的前 16 个线程进入分支。这时开始出现 warp divergence。通过这种方式，成功地消除了前 3 次迭代中的 warp divergence。
+在第 2 次迭代中，warp 的 index 为 0 和 1 的进入计算分支。在第 3 次迭代中，只有 warp 的 index 为 0 的 warp 进入计算分支。而在第 4 次迭代中，仅有 warp 的 index 为 0 的 warp 的前 16 个线程进入分支。这时开始出现 warp divergence。通过这种方式，成功地消除了前 3 次迭代中的 warp divergence。
 
 这样的写法也消除了取模操作，因为我们不再需要取模操作来判断线程的奇偶性。
 
