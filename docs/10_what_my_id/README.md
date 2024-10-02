@@ -1,15 +1,15 @@
 # 打印线程号相关信息
 
-本章节旨在帮助用户了解cuda内部线程块划分的规则，理解线程号的计算逻辑。
+本章节旨在帮助用户了解 cuda 内部线程块划分的规则，理解线程号的计算逻辑。
 
-## 1. 1维block和1维thread
+## 1. 1 维 block 和 1 维 thread
 
-样例中设置了两个block,每个block中64个线程,  blockDim.x = 64,  
-blockIdx.x 代表当前线程所在第几个block;  
-threadIdx.x 代表当前现在在当前block中是第几个thread;  
-warp_idx 代表当前线程在当前block中是第几个warp（warp 会选择相邻的线程号做组合）;  
-calc_idx 代表当前线程计算的是全局的第几个thread;  
-block的索引 * 每个block的thread个数 + block内的thread索引 计算出全局索引。  
+样例中设置了两个 block,每个 block 中 64 个线程,  blockDim.x = 64,  
+blockIdx.x 代表当前线程所在第几个 block;  
+threadIdx.x 代表当前现在在当前 block 中是第几个 thread;  
+warp_idx 代表当前线程在当前 block 中是第几个 warp（warp 会选择相邻的线程号做组合）;  
+calc_idx 代表当前线程计算的是全局的第几个 thread;  
+block 的索引 * 每个 block 的 thread 个数 + block 内的 thread 索引 计算出全局索引。  
 
 ```c++
    const unsigned int thread_idx = blockIdx.x * blockDim.x + threadIdx.x;
@@ -162,12 +162,12 @@ cac_thread 125 - block  1 - warp   1 - thread 61
 cac_thread 126 - block  1 - warp   1 - thread 62
 cac_thread 127 - block  1 - warp   1 - thread 63
 ```
-## 2.  2维block和2维thread
+## 2.  2 维 block 和 2 维 thread
 
-一，二列是用户调用kernel时设置的block个数 num_blocks =（1，4）， x 维是1， y维是4；  
-三，四列是用户调用kernel时设置的每个block中thread个数 num_threads= （32, 4)  x 维是32， y维是4；  
+一，二列是用户调用 kernel 时设置的 block 个数 num_blocks =（1，4）， x 维是 1， y 维是 4；  
+三，四列是用户调用 kernel 时设置的每个 block 中 thread 个数 num_threads= （32, 4)  x 维是 32， y 维是 4；  
 
-总的线程数计算为`（gridDim.x * gridDim.y）* （blockDim.x * blockDim.y）` 共计512个线程。  
+总的线程数计算为`（gridDim.x * gridDim.y）* （blockDim.x * blockDim.y）` 共计 512 个线程。  
 
 ```c++
     griddim_x[thread_idx] = gridDim.x; // 1
@@ -176,18 +176,18 @@ cac_thread 127 - block  1 - warp   1 - thread 63
     blockdim_y[thread_idx] = blockDim.y; // 4
 ```
 
-gradDim.x 描述block 在x维上的个数； gradDim.y 描述block 在y维上的个数；   
-blcokDim.x 描述每个block 的x维上thread的个数；blockDim.y 描述每个block 的y维上thread的个数。  
+gradDim.x 描述 block 在 x 维上的个数； gradDim.y 描述 block 在 y 维上的个数；   
+blcokDim.x 描述每个 block 的 x 维上 thread 的个数；blockDim.y 描述每个 block 的 y 维上 thread 的个数。  
 
-五列描述当前线程计算的是全局的第几个thread。  
+五列描述当前线程计算的是全局的第几个 thread。  
 
 ```c++
     const unsigned int thread_idx = ((gridDim.x * blockDim.x) * idy) + idx ;
 ```
 
-推导过程如下： 
-六，七列分别描述当前线程blockIdx.x， blockIdx.y，  
-八，九列分别描述当前线程threadIdx.x, threadIdx.y。  
+推导过程如下：
+六，七列分别描述当前线程 blockIdx.x， blockIdx.y，  
+八，九列分别描述当前线程 threadIdx.x, threadIdx.y。  
 
 ```c++
     blockidx_x[thread_idx] = blockIdx.x;
@@ -196,12 +196,12 @@ blcokDim.x 描述每个block 的x维上thread的个数；blockDim.y 描述每个
     threadid_y[thread_idx] = threadIdx.y;
 ```
 
-blockIdx.x: 在grid 的x维上第几个block, blockIdx.y: grid的y维上第几个块；  
-threadIdx.x: 在block 的x维上第几个thread，threadIdx.y: 在block的y维上第几thread。  
+blockIdx.x: 在 grid 的 x 维上第几个 block, blockIdx.y: grid 的 y 维上第几个块；  
+threadIdx.x: 在 block 的 x 维上第几个 thread，threadIdx.y: 在 block 的 y 维上第几 thread。  
 
-十，十一列计算了当前线程在grid 的x维上第几个thread（idx）, 在grid 的y维上第几个thread（idy),  
+十，十一列计算了当前线程在 grid 的 x 维上第几个 thread（idx）, 在 grid 的 y 维上第几个 thread（idy),  
 
-计算方式为当前线程在grid中（x/y）维第几个block * 每个block（x/y维）的线程个数 + 在当前block 中（x/y)维第几个线程。  
+计算方式为当前线程在 grid 中（x/y）维第几个 block * 每个 block（x/y 维）的线程个数 + 在当前 block 中（x/y)维第几个线程。  
 ```c++
     const unsigned int idx = blockIdx.x * blockDim.x + threadIdx.x;
     const unsigned int idy = blockIdx.y * blockDim.y + threadIdx.y;
@@ -210,7 +210,7 @@ threadIdx.x: 在block 的x维上第几个thread，threadIdx.y: 在block的y维�
     thread_y[thread_idx] = idy;
 ```
 
-由此可推导全局的索引 = 每行的thread 数 * 行数 + 单行的列偏移  
+由此可推导全局的索引 = 每行的 thread 数 * 行数 + 单行的列偏移  
 
 ```c++
     const unsigned int thread_idx = ((gridDim.x * blockDim.x) * idy) + idx ;

@@ -1,6 +1,6 @@
 # 展开 Warp
 
-现在我们已经使用了3种方法对 Reduce Kernel 进行优化 （交错寻址、去除 Bank Confilt、减少空闲线程）。
+现在我们已经使用了 3 种方法对 Reduce Kernel 进行优化 （交错寻址、去除 Bank Confilt、减少空闲线程）。
 当下实现的 Kernel 距离理论带宽还有一定距离，我们可以继续优化。Reduce 并不是一个算术密集型的 Kernel。
 对于这种 Kernel，一个可能的瓶颈就是地址算术指令和循环的开销。
 
