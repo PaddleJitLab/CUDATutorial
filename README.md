@@ -61,7 +61,7 @@
 ### LLM 推理技术 🤖
 
 + [连续批处理](./docs/13_continuous_batch/README.md)
-+ [Page Attention](./docs/14_page_attention/README.md)
++ [Page Attention - 原理篇](./docs/14_page_attention/README.md)
 
 
 [![Star History Chart](https://api.star-history.com/svg?repos=PaddleJitLab/CUDATutorial&type=Date)](https://star-history.com/#PaddleJitLab/CUDATutorial&Date)

@@ -1,10 +1,10 @@
 name: Lint Markdown Files
 
 on:
-  push:
+  pull_request:
     branches:
       - develop
-  pull_request:
+  push:
     branches:
       - develop
 
@@ -23,10 +23,10 @@ jobs:
       with:
         node-version: '21'
 
-    # Step 3: Install dependencies
-    - name: Install dependencies
-      run: npm install
+    # Step 3: Install lint-md-cli
+    - name: Install lint-md-cli
+      run: npm install -g lint-md-cli
 
-    # Step 4: Run lint-md
-    - name: Run lint-md
-      run: npx lint-md .
+    # Step 4: Run lint-md using npx
+    - name: Run lint-md check
+      run: npx lint-md-cli .

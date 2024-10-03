@@ -54,5 +54,5 @@
 ### LLM 推理技术 🤖
 
 + [连续批处理](/continuous_batch)
-+ [Page Attention](/page_attention)
++ [Page Attention - 原理篇](/page_attention)
 
