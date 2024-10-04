@@ -12,70 +12,53 @@ module.exports = {
 
 /** @type {import('@docusaurus/types').Config} */
 const config = {
-  title: 'Notebook',
-  tagline: '',
-  url: 'https://space.keter.top',
-  baseUrl: '/',
-  onBrokenLinks: 'throw',
-  onBrokenMarkdownLinks: 'warn',
-  favicon: 'img/favicon.ico',
-  organizationName: 'facebook', // Usually your GitHub org/user name.
-  projectName: 'CUDATutorial', // Usually your repo name.
+    title: 'Notebook',
+    tagline: '',
+    url: 'https://space.keter.top',
+    baseUrl: '/',
+    onBrokenLinks: 'throw',
+    onBrokenMarkdownLinks: 'warn',
+    favicon: 'img/favicon.ico',
+    organizationName: 'facebook', // Usually your GitHub org/user name.
+    projectName: 'CUDATutorial', // Usually your repo name.
 
-  presets: [
-    [
-      'classic',
-      /** @type {import('@docusaurus/preset-classic').Options} */
-      ({
-        docs: {
-          sidebarPath: require.resolve('./sidebars.js'),
-              // Please change this to your repo.
-          routeBasePath: '/',
-          editUrl: 'https://github.com/PaddleJitLab/CUDATutorial/tree/develop',
-          remarkPlugins: [math],
-          rehypePlugins: [katex],
-        },
-        blog: {
-          showReadingTime: true,
-            // Please change this to your repo.
-          routeBasePath: '/',
-          editUrl:
-            'https://github.com/PaddleJitLab/CUDATutorial/tree/develop',
-        },
-          theme: {
-          customCss: require.resolve('./src/css/custom.css'),
-        },
-      }),
+    presets: [
+        [
+            'classic',
+            /** @type {import('@docusaurus/preset-classic').Options} */
+            ({
+                docs: {
+                    sidebarPath: require.resolve('./sidebars.js'),
+                    // Please change this to your repo.
+                    routeBasePath: '/',
+                    editUrl: 'https://github.com/PaddleJitLab/CUDATutorial/tree/develop',
+                    remarkPlugins: [math],
+                    rehypePlugins: [katex],
+                },
+                blog: {
+                    showReadingTime: true,
+                    // Please change this to your repo.
+                    routeBasePath: '/',
+                    editUrl:
+                        'https://github.com/PaddleJitLab/CUDATutorial/tree/develop',
+                },
+                theme: {
+                    customCss: require.resolve('./src/css/custom.css'),
+                },
+            }),
+        ],
     ],
-  ],
 
-  plugins: [
-    [
-      require.resolve("@easyops-cn/docusaurus-search-local"),
-      {
-        // ... Your options.
-        // `hashed` is recommended as long-term-cache of index file is possible.
-        hashed: true,
-        // For Docs using Chinese, The `language` is recommended to set to:
-        // ```
-        language: ["zh"],
-        // ```
-        // When applying `zh` in language, please install `nodejieba` in your project.
-        translations: {
-          search_placeholder: "Search",
-          see_all_results: "See all results",
-          no_results: "No results.",
-          search_results_for: 'Search results for "{{ keyword }}"',
-          search_the_documentation: "Search the documentation",
-          count_documents_found: "{{ count }} document found",
-          count_documents_found_plural: "{{ count }} documents found",
-          no_documents_were_found: "No documents were found",
-        },
-      },
+    plugins: [
+        [
+            require.resolve("@cmfcmf/docusaurus-search-local"),
+            {
+                language: "zh",
+            }
+        ],
     ],
-  ],
 
-  themeConfig:
+    themeConfig:
         /** @type {import('@docusaurus/preset-classic').ThemeConfig} */
         ({
             metadata: [
@@ -109,13 +92,13 @@ const config = {
             },
         }),
     stylesheets: [
-      {
-        href: 'https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css',
-        type: 'text/css',
-        integrity:
-          'sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM',
-        crossorigin: 'anonymous',
-      },
+        {
+            href: 'https://cdn.jsdelivr.net/npm/katex@0.13.24/dist/katex.min.css',
+            type: 'text/css',
+            integrity:
+                'sha384-odtC+0UGzzFL/6PNoE8rX/SPcQDXBJ+uRepguP4QkPCm2LBxH3FA3y+fKSiJ+AmM',
+            crossorigin: 'anonymous',
+        },
     ],
 };
 
