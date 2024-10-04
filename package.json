@@ -15,9 +15,10 @@
     "typecheck": "tsc"
   },
   "dependencies": {
+    "@cmfcmf/docusaurus-search-local": "^1.2.0",
     "@docusaurus/core": "2.4.1",
-    "@docusaurus/preset-classic": "2.4.1",
     "@docusaurus/plugin-sitemap": "^2.4.1",
+    "@docusaurus/preset-classic": "2.4.1",
     "@docusaurus/theme-search-algolia": "^2.4.1",
     "@easyops-cn/docusaurus-search-local": "^0.21.4",
     "@mdx-js/react": "^1.6.21",
