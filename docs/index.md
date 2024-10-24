@@ -57,5 +57,6 @@
 + [连续批处理](/continuous_batch)
 + [Page Attention - 原理篇](/page_attention)
 + [Page Attention - 源码解析](/vllm_page_attention)
-+ [vLLM 源码解读系列 - vLLM 代码架构介绍](/vllm_sorce_code/vllm_arch)
++ [vLLM 源码解读系列 - vLLM 代码架构介绍](/vllm_source_code/vllm_arch)
++ [vLLM 源码解读系列 - 调度前的预处理工作](/vllm_source_code/vllm_scheduler)
 
