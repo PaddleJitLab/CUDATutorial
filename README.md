@@ -65,6 +65,7 @@
 + [Page Attention - 源码解析](./docs/15_vllm_page_attention/README.md)
 + [vLLM 源码解读系列 - vLLM 代码架构介绍](./docs/16_vllm_source_code/01_vllm_arch.md)
 + [vLLM 源码解读系列 - 调度前的预处理工作](./docs/16_vllm_source_code/02_preprocess_before_scheduler.md)
++ [vLLM 源码解读系列 - 调度器策略](./docs/16_vllm_source_code/03_scheduler.md)
 
 
 [![Star History Chart](https://api.star-history.com/svg?repos=PaddleJitLab/CUDATutorial&type=Date)](https://star-history.com/#PaddleJitLab/CUDATutorial&Date)
