@@ -60,4 +60,5 @@
 + [vLLM 源码解读系列 - vLLM 代码架构介绍](/vllm_source_code/vllm_arch)
 + [vLLM 源码解读系列 - 调度前的预处理工作](/vllm_source_code/preprocess_before_scheduler)
 + [vLLM 源码解读系列 - 调度器策略](/vllm_source_code/scheduler)
-
++ [vLLM 源码解读系列 - vLLM BlockManager - NaiveBlockAllocator](/vllm_source_code/block_manager_part1)
++ [vLLM 源码解读系列 - vLLM BlockManager - PrefixCachingBlockAllocator](/vllm_source_code/block_manager_part2)
