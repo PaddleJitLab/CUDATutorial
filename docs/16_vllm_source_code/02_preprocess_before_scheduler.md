@@ -265,7 +265,6 @@ def _process_decoder_only_prompt(
         prompt_adapter_request=prompt_adapter_request,
     )
 ```
-```plain
 
 `_extract_prompt_components` 方法负责提取其组成部分（例如：token ids，文本等），详细介绍见注释：
 
