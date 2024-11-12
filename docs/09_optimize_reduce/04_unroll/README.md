@@ -1,6 +1,6 @@
 # 展开 Warp
 
-现在我们已经使用了 3 种方法对 Reduce Kernel 进行优化 （交错寻址、去除 Bank Confilt、减少空闲线程）。
+现在我们已经使用了 3 种方法对 Reduce Kernel 进行优化 （交错寻址、去除 Bank Conflilt、减少空闲线程）。
 当下实现的 Kernel 距离理论带宽还有一定距离，我们可以继续优化。Reduce 并不是一个算术密集型的 Kernel。
 对于这种 Kernel，一个可能的瓶颈就是地址算术指令和循环的开销。
 
@@ -28,8 +28,7 @@ for (int s = blockDim.x / 2; s > 0; s >>= 1)
 }
 ```
 
-每一次循环都会进行一个 BLOCK 中线程的同步。但是实际上当 `s <= 32` 的时候我们只用到了一个 Warp 的线程。
-在最后一个 Warp 中，由于一个 Warp 中的线程都是在同一个 simd 单元上的这些线程本来就是同步的，所以这个同步就是没有必要的了。
+每一次循环都会进行一个 BLOCK 中线程的同步。但是实际上当 `s <= 32` 的时候，由于 `tid <= s` 所以我们只用到了一个 Warp 的线程。由于 cuda 是单指令多线程的设计，所以同一个 Warp 中的线程都是并行执行的。所以最后一个 Warp 在同一个 simd 单元上的这些线程本来就是同步的，所以这个 `__syncthreads()` 同步就是没有必要的了。
 
 
 ## 2. 优化方案
@@ -41,12 +40,12 @@ for (int s = blockDim.x / 2; s > 0; s >>= 1)
 ```cpp
 __device__ void warp_reduce(volatile int *sdata, int tid)
 {
-    sdada[tid] += sdata[tid + 32];
-    sdada[tid] += sdata[tid + 16];
-    sdada[tid] += sdata[tid + 8];
-    sdada[tid] += sdata[tid + 4];
-    sdada[tid] += sdata[tid + 2];
-    sdada[tid] += sdata[tid + 1];
+    sdata[tid] += sdata[tid + 32];
+    sdata[tid] += sdata[tid + 16];
+    sdata[tid] += sdata[tid + 8];
+    sdata[tid] += sdata[tid + 4];
+    sdata[tid] += sdata[tid + 2];
+    sdata[tid] += sdata[tid + 1];
 }
 ```
 
@@ -87,13 +86,13 @@ nvcc -o reduce_unroll_last_warp reduce_unroll_last_warp.cu
 对上面的 Kernel 进行性能分析结果如下：
 
 
-| 优化手段 | 运行时间(us) | 带宽 | 加速比 |
-| --- | --- | --- | --- |
-| Baseline | 3118.4 | 42.503GB/s | ~ |
-| 交错寻址 | 1904.4 | 73.522GB/s | 1.64 |
-| 解决 bank conflict | 1475.2 | 97.536GB/s | 2.29 |
-| 去除 idle 线程 | 758.38 | 189.78GB/s | 4.11 |
-| 展开最后一个 Warp | 484.01 | 287.25GB/s | 6.44 |
+| 优化手段           | 运行时间(us) | 带宽       | 加速比 |
+| ------------------ | ------------ | ---------- | ------ |
+| Baseline           | 3118.4       | 42.503GB/s | ~      |
+| 交错寻址           | 1904.4       | 73.522GB/s | 1.64   |
+| 解决 bank conflict | 1475.2       | 97.536GB/s | 2.29   |
+| 去除 idle 线程     | 758.38       | 189.78GB/s | 4.11   |
+| 展开最后一个 Warp  | 484.01       | 287.25GB/s | 6.44   |
 
 ### 2.2. 完全展开
 
@@ -173,14 +172,14 @@ nvcc -o reduce_unroll_all reduce_unroll_all.cu
 
 对上面的 Kernel 进行性能分析结果如下：
 
-| 优化手段 | 运行时间(us) | 带宽(GB/s) | 加速比 |
-| --- | --- | --- | --- |
-| Baseline | 3118.4 | 42.503 | ~ |
-| 交错寻址 | 1904.4 | 73.522 | 1.64 |
-| 解决 bank conflict | 1475.2 | 97.536 | 2.29 |
-| 去除 idle 线程 | 758.38 | 189.78 | 4.11 |
-| 展开最后一个 Warp | 484.01 | 287.25 | 6.44 |
-| 完全展开 | 477.23 |  291.77 | 6.53 |
+| 优化手段           | 运行时间(us) | 带宽(GB/s) | 加速比 |
+| ------------------ | ------------ | ---------- | ------ |
+| Baseline           | 3118.4       | 42.503     | ~      |
+| 交错寻址           | 1904.4       | 73.522     | 1.64   |
+| 解决 bank conflict | 1475.2       | 97.536     | 2.29   |
+| 去除 idle 线程     | 758.38       | 189.78     | 4.11   |
+| 展开最后一个 Warp  | 484.01       | 287.25     | 6.44   |
+| 完全展开           | 477.23       | 291.77     | 6.53   |
 
 
 ## 3. 总结
