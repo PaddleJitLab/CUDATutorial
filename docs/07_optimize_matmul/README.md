@@ -11,7 +11,7 @@
 
 以下是 A100 GPU 内存层次结构的图示：
 
-![picture 0](images/264915564b04781951d36d7d8527b418bbe0fea3a3969563a639f6575c1febd5.png)  
+![picture 0](images/264915564b04781951d36d7d8527b418bbe0fea3a3969563a639f6575c1febd5.png)
 
 从逻辑上看，共享内存在各个块之间进行了分区。这意味着一个线程可以通过共享内存块与同一块内的其他线程进行通信。共享内存的大小是可配置的，可以通过权衡以获得更大的共享内存而减小 L1 缓存的大小。
 
@@ -74,6 +74,8 @@ nvcc -o matmul_shared matmul_shared.cu
 ./matmul_shared
 ```
 
+一个随堂练习：打开 `matmul_shared.cu` 代码思考一下，你能发现代码有什么问题吗？该如何修改呢？答案会放到本文的末尾，不过还是建议读者好好思考一下，不急着去看答案哈哈哈。
+
 ## 一维 Thread Tile 并行优化
 
 ###  性能优化分析
@@ -84,15 +86,15 @@ nvcc -o matmul_shared matmul_shared.cu
 
 以下图为例：
 
-![picture 0](images/3b9ca1d09a35e62b14f73b56e21b988d379bf0b38b8af6d4d9b17d9f46663c1c.png)  
+![picture 0](images/3b9ca1d09a35e62b14f73b56e21b988d379bf0b38b8af6d4d9b17d9f46663c1c.png)
 
 上图中，A 和 B 都是 7x7 的矩阵。当每一个线程只计算一个结果的时候，我们需要从 A 中读取 7 个数据，从 B 中读取 7 个数据，从 C 中读取 1 个数据，然后写一次 C。这样的话，每个线程需要读取 15 个数据，写一次数据。如果我们每一个线程计算 4 个结果，那么我们需要从 A 中读取 14 个数据，从 B 中读取 14 个数据，从 C 中读取 4 个数据，然后写 4 次 C。这样的话，每个线程需要读取 32 个数据，写 4 次数据。计算每个线程的平方结果比计算结果的列更有效，因为这样我们可以共享更多的输入。
 
 所以，我们可以看到，每个线程计算更多的结果，可以减少读取数据的次数，从而提高性能。这里我们用一维 Thread Tile 并行来实现这个功能。也即下图：
 
-![picture 1](images/029d6d7f597e03b81754dff8748ec5decdfaa49c55d2613be43772371659deed.png)  
+![picture 1](images/029d6d7f597e03b81754dff8748ec5decdfaa49c55d2613be43772371659deed.png)
 
-总的来说，虽然我们的所有内核执行的 FLOP 数量相同，但通过每个线程计算更多的结果，我们能够减少对 GMEM 的访问次数。 
+总的来说，虽然我们的所有内核执行的 FLOP 数量相同，但通过每个线程计算更多的结果，我们能够减少对 GMEM 的访问次数。这也是很常见的算子优化思路：一次 IO，多点计算。用尽可能少的 IO 次数完成尽可能多的计算，减少总体运行时间中 IO 时间的占比。
 
 ### 一维 Thread Tile 并行实现
 
@@ -100,7 +102,7 @@ nvcc -o matmul_shared matmul_shared.cu
 
 ![picture 2](images/3bdc0715688817d9d6c4b6d3047861e76142c27a8b7cc59fca4020f951223baa.png)
 
-在这个内核中，所有重要的更改都发生在内循环中。与之前相比，从 GMEM 到 SMEM 的加载基本相同。下面是代码的重要部分：
+在这个内核中，所有重要的更改都发生在内循环中。与之前相比，从 GMEM 到 SMEM 的加载基本相同；不同的部分是增加了有关 TM 的循环，TM 变量的含义是单个线程计算结果的数量，当 TM 为 8 时，表示单个线程从 As 中读取 8 行的数据和 Bs 进行乘法计算，最终一次输出 8 个数据。下面是代码的重要部分：
 
 ```cpp
 // 为寄存器文件分配线程本地缓存
@@ -162,14 +164,14 @@ nvcc -o matmul_tiled matmul_tiled.cu
 
 我们将上面两个内核的性能进行比较，我们分别计算 256x256、512x512、1024x1024、2048x2048 （Matrix 1、Matrix 2、Matrix 3、Matrix 4）的矩阵乘法的性能。在 1080Ti 上运行，结果如下：
 
-![picture 3](images/1a8df2b3afe650e592a3d3943d9d59088b5d1e531dcc9a01ec8987a6d3c739ba.png)  
+![picture 3](images/1a8df2b3afe650e592a3d3943d9d59088b5d1e531dcc9a01ec8987a6d3c739ba.png)
 
 
-| Algorithm | Matrix 1 | Matrix 2 | Matrix 3 | Matrix 4 |
-| --------- | -------- | -------- | -------- | -------- |
-| Naive     | 95.5152  | 724.396  | 28424    | 228681   |
-| 共享内存缓存块    | 40.5293  | 198.374  | 8245.68  | 59048.4  |
-| 一维 Thread Tile     | 20.6685  | 35.8774  | 894.779  | 5880.03  |
+| Algorithm        | Matrix 1 | Matrix 2 | Matrix 3 | Matrix 4 |
+| ---------------- | -------- | -------- | -------- | -------- |
+| Naive            | 95.5152  | 724.396  | 28424    | 228681   |
+| 共享内存缓存块   | 40.5293  | 198.374  | 8245.68  | 59048.4  |
+| 一维 Thread Tile | 20.6685  | 35.8774  | 894.779  | 5880.03  |
 
 ## 总结
 
@@ -186,25 +188,13 @@ nvcc -o matmul_tiled matmul_tiled.cu
 > UNIVERSAL_SGEMM_CUDA 这个仓库是笔者学习矩阵乘法优化的时候整理的仓库，主要还是参考了其他大佬的仓库，在其基础上进行了整理。目前还在更新中，欢迎大家来提 issue 和 PR。
 
 
-## Reference 
+## 随堂练习答案
+
+对于共享内存和一维 Thread Tile 优化，都对矩阵的大小有严格的要求。在两种优化实现的 kernel 函数中，采用了 block_size 及其相关变量为步长进行循环，但是当矩阵大小的某个维度不是 32 的整倍数时，代码会有各种的段错误出现。
+
+## Reference
 
 1. https://siboehm.com/articles/22/CUDA-MMM
 2. https://space.keter.top/docs/high_performance/GEMM%E4%BC%98%E5%8C%96%E4%B8%93%E9%A2%98/%E5%85%B1%E4%BA%AB%E5%86%85%E5%AD%98%E7%BC%93%E5%AD%98%E5%9D%97
 3. https://space.keter.top/docs/high_performance/GEMM%E4%BC%98%E5%8C%96%E4%B8%93%E9%A2%98/%E4%B8%80%E7%BB%B4Thread%20Tile%E5%B9%B6%E8%A1%8C%E4%BC%98%E5%8C%96
 4. https://github.com/AndSonder/UNIVERSAL_SGEMM_CUDA
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-

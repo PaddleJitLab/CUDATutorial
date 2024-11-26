@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-#define CEIL_DIV(M, N) (((M) + (N)-1) / (N))
+#define CEIL_DIV(M, N) (((M) + (N) - 1) / (N))
 
 void sgemm_naive_cpu(float *A, float *B, float *C, int M, int N, int K)
 {
@@ -125,7 +125,7 @@ int main()
 
     // Allocate memory for matrices
     float *A, *B, *C, *C_ref;
-    float *d_A, *d_B, *d_C, *d_C_ref;
+    float *d_A, *d_B, *d_C;
 
     A = new float[m * k];
     B = new float[k * n];
@@ -146,13 +146,11 @@ int main()
     cudaMalloc((void **)&d_A, m * k * sizeof(float));
     cudaMalloc((void **)&d_B, k * n * sizeof(float));
     cudaMalloc((void **)&d_C, m * n * sizeof(float));
-    cudaMalloc((void **)&d_C_ref, m * n * sizeof(float));
 
     // Copy matrices to device
     cudaMemcpy(d_A, A, m * k * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, B, k * n * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_C, C, m * n * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_C_ref, C_ref, m * n * sizeof(float), cudaMemcpyHostToDevice);
 
     run_sgemm_blocktiling_1d(d_A, d_B, d_C, m, n, k);
 
@@ -171,6 +169,22 @@ int main()
             return 1;
         }
     }
+
+    free(A);
+    free(B);
+    free(C);
+    free(C_ref);
+    A = nullptr;
+    B = nullptr;
+    C = nullptr;
+    C_ref = nullptr;
+
+    cudaFree(d_A);
+    cudaFree(d_B);
+    cudaFree(d_C);
+    d_A = nullptr;
+    d_B = nullptr;
+    d_C = nullptr;
 
     printf("Success!\n");
     return 0;

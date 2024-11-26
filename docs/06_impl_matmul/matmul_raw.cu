@@ -1,7 +1,7 @@
 #include <stdio.h>
 #include <cuda_runtime.h>
 
-#define CEIL_DIV(M, N) (((M) + (N)-1) / (N))
+#define CEIL_DIV(M, N) (((M) + (N) - 1) / (N))
 
 void sgemm_naive_cpu(float *A, float *B, float *C, int M, int N, int K)
 {
@@ -97,6 +97,22 @@ int main()
             return 1;
         }
     }
+
+    free(A);
+    free(B);
+    free(C);
+    free(C_ref);
+    A = nullptr;
+    B = nullptr;
+    C = nullptr;
+    C_ref = nullptr;
+
+    cudaFree(d_A);
+    cudaFree(d_B);
+    cudaFree(d_C);
+    d_A = nullptr;
+    d_B = nullptr;
+    d_C = nullptr;
 
     printf("Success!\n");
     return 0;

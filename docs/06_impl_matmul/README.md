@@ -8,7 +8,7 @@
 
 块中的线程数可以使用一个通常称为 `blockDim` 的变量进行配置，它是一个由三个整数组成的向量。该向量的条目指定了 `blockDim.x`、`blockDim.y` 和 `blockDim.z` 的大小，如下图所示：
 
-![picture 0](images/0b35adb64a964e56018dc9fb7277269a3efa72b1526058609e0860f33e00426b.png)  
+![picture 0](images/0b35adb64a964e56018dc9fb7277269a3efa72b1526058609e0860f33e00426b.png)
 
 同样，网格中的块数可以使用 `gridDim` 变量进行配置。当我们从主机启动一个新的内核时，它会创建一个包含按照指定方式排列的块和线程的单一网格。
 
@@ -47,6 +47,16 @@ __global__ void sgemm_naive_kernel(float *A, float *B, float *C, int M, int N, i
 下图可视化了我们的内核的执行方式：
 
 ![picture 1](images/6f55c7f9531e5efd955eab9a572ef5406733498bc0b50abed0e73985d88c840b.png)
+
+一个好的编程习惯：在代码的最后一定一定记得释放堆内存，避免内存泄漏；并将指针置为空防止野指针的出现。不过这种事很容易忘记，有兴趣的宝贝可以学习下智能指针的用法，本文就不在展开介绍 C++ 的东西。
+
+```cpp
+free(cpu_addr); // 释放 CPU 内存
+cpu_addr = nullptr; // 置空
+
+cudaFree(cuda_addr); // cudaFree API 释放 cuda 内存
+cuda_addr = nullptr; // 置空
+```
 
 运行命令：
 
