@@ -2,7 +2,22 @@
 #include <cuda_runtime.h>
 #include <cassert>
 
-#define CEIL_DIV(M, N) (((M) + (N)-1) / (N))
+#define CEIL_DIV(M, N) (((M) + (N) - 1) / (N))
+
+template <typename T>
+void free_resource(T *p_cpu, T *p_cuda)
+{
+    if (nullptr != p_cpu)
+    {
+        delete[] p_cpu;
+        p_cpu = nullptr;
+    }
+    if (nullptr != p_cuda)
+    {
+        cudaFree(p_cuda);
+        p_cuda = nullptr;
+    }
+}
 
 void sgemm_naive_cpu(float *A, float *B, float *C, int M, int N, int K)
 {
@@ -155,7 +170,7 @@ int main(int argc, char *argv[])
 
     // Allocate memory for matrices
     float *A, *B, *C, *C_ref;
-    float *d_A, *d_B, *d_C, *d_C_ref;
+    float *d_A, *d_B, *d_C;
 
     A = new float[m * k];
     B = new float[k * n];
@@ -176,13 +191,11 @@ int main(int argc, char *argv[])
     cudaMalloc((void **)&d_A, m * k * sizeof(float));
     cudaMalloc((void **)&d_B, k * n * sizeof(float));
     cudaMalloc((void **)&d_C, m * n * sizeof(float));
-    cudaMalloc((void **)&d_C_ref, m * n * sizeof(float));
 
     // Copy matrices to device
     cudaMemcpy(d_A, A, m * k * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, B, k * n * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_C, C, m * n * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_C_ref, C_ref, m * n * sizeof(float), cudaMemcpyHostToDevice);
 
     run_sgemm_blocktiling_2d(d_A, d_B, d_C, m, n, k);
 
@@ -219,5 +232,11 @@ int main(int argc, char *argv[])
     cudaEventElapsedTime(&elapsed_time, start, stop);
     float avg_run_time = elapsed_time * 1000 / 100;
     printf("Average run time: %f us\n", avg_run_time);
+
+    free_resource(A, d_A);
+    free_resource(B, d_B);
+    free_resource(C, d_C);
+    free_resource(C_ref, (float *)nullptr);
+
     return 0;
 }
