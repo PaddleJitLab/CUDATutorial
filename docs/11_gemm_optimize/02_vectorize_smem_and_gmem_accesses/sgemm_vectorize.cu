@@ -7,9 +7,25 @@
 #include <cuda.h>
 #include <cstdlib>
 
-#define CEIL_DIV(M, N) (((M) + (N)-1) / (N))
+#define CEIL_DIV(M, N) (((M) + (N) - 1) / (N))
 #define OFFSET(row, col, ld) ((row) * (ld) + (col))
 #define FETCH_FLOAT4(pointer) (reinterpret_cast<float4 *>(&(pointer))[0])
+
+void free_resource(float *ptr, int is_cuda = 1)
+{
+    if (nullptr != ptr)
+    {
+        if (is_cuda)
+        {
+            cudaFree(ptr);
+        }
+        else
+        {
+            delete[] ptr;
+        }
+    }
+    ptr = nullptr;
+}
 
 void sgemm_naive_cpu(float *A, float *B, float *C, int M, int N, int K)
 {
@@ -36,8 +52,8 @@ __global__ void __launch_bounds__((BM * BN) / (TM * TN), 1) sgemm_vectorize_kern
     const uint c_row = blockIdx.y;
     const uint c_col = blockIdx.x;
 
-    const int block_row_thread = BN / TN;
-    const int block_col_thread = BM / TM;
+    const int block_row_thread = BM / TM;
+    const int block_col_thread = BN / TN;
     // 一个线程负责计算 block 中 TM*TN 个元素
     const int thread_num = block_row_thread * block_col_thread;
 
@@ -73,8 +89,8 @@ __global__ void __launch_bounds__((BM * BN) / (TM * TN), 1) sgemm_vectorize_kern
     C += c_row * BM * N + c_col * BN;
 
     float thread_results[TM * TN] = {0.0};
-    // 每个线程搬运ldg_a_num轮，寄存器缓存ldg_a_num个float4元素，用于转置As矩阵
-    float ldg_reg_a[4 * ldg_a_num] = {0.};
+    // 转置时，只用大小为 4 的数组就可以
+    float ldg_reg_a[4] = {0.};
     float reg_a[TM] = {0.0}; // 缓存 smem_a
     float reg_b[TN] = {0.0}; // 缓存 smem_b
 
@@ -83,13 +99,12 @@ __global__ void __launch_bounds__((BM * BN) / (TM * TN), 1) sgemm_vectorize_kern
     {
         for (int i = 0; i < BM; i += stride_a)
         {
-            int ldg_index = i / stride_a * 4;
-            FETCH_FLOAT4(ldg_reg_a[ldg_index]) = FETCH_FLOAT4(A[OFFSET(i + inner_row_a, inner_col_a, K)]);
+            FETCH_FLOAT4(ldg_reg_a[0]) = FETCH_FLOAT4(A[OFFSET(i + inner_row_a, inner_col_a, K)]);
             // smem_a 转置存，其中 ldg_reg_a 做中间缓存，目的是读取时可以按FLOAT4读取
-            smem_a[OFFSET(inner_col_a, i + inner_row_a, BM)] = ldg_reg_a[ldg_index];
-            smem_a[OFFSET(inner_col_a + 1, i + inner_row_a, BM)] = ldg_reg_a[ldg_index + 1];
-            smem_a[OFFSET(inner_col_a + 2, i + inner_row_a, BM)] = ldg_reg_a[ldg_index + 2];
-            smem_a[OFFSET(inner_col_a + 3, i + inner_row_a, BM)] = ldg_reg_a[ldg_index + 3];
+            smem_a[OFFSET(inner_col_a, i + inner_row_a, BM)] = ldg_reg_a[0];
+            smem_a[OFFSET(inner_col_a + 1, i + inner_row_a, BM)] = ldg_reg_a[1];
+            smem_a[OFFSET(inner_col_a + 2, i + inner_row_a, BM)] = ldg_reg_a[2];
+            smem_a[OFFSET(inner_col_a + 3, i + inner_row_a, BM)] = ldg_reg_a[3];
         }
 
         for (int i = 0; i < BK; i += stride_b)
@@ -166,7 +181,7 @@ int main(int argc, char *argv[])
 
     // Allocate memory for matrices
     float *A, *B, *C, *C_ref;
-    float *d_A, *d_B, *d_C, *d_C_ref;
+    float *d_A, *d_B, *d_C;
 
     A = new float[m * k];
     B = new float[k * n];
@@ -183,17 +198,10 @@ int main(int argc, char *argv[])
     cudaMalloc((void **)&d_B, k * n * sizeof(float));
     cudaMalloc((void **)&d_C, m * n * sizeof(float));
 
-    // Copy data to device
-    cudaMalloc((void **)&d_A, m * k * sizeof(float));
-    cudaMalloc((void **)&d_B, k * n * sizeof(float));
-    cudaMalloc((void **)&d_C, m * n * sizeof(float));
-    cudaMalloc((void **)&d_C_ref, m * n * sizeof(float));
-
     // Copy matrices to device
     cudaMemcpy(d_A, A, m * k * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, B, k * n * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_C, C, m * n * sizeof(float), cudaMemcpyHostToDevice);
-    cudaMemcpy(d_C_ref, C_ref, m * n * sizeof(float), cudaMemcpyHostToDevice);
 
     run_sgemm_vectorize(d_A, d_B, d_C, m, n, k);
 
@@ -230,5 +238,15 @@ int main(int argc, char *argv[])
     cudaEventElapsedTime(&elapsed_time, start, stop);
     float avg_run_time = elapsed_time * 1000 / 100;
     printf("Average run time: %f us\n", avg_run_time);
+
+    free_resource(A, 0);
+    free_resource(B, 0);
+    free_resource(C, 0);
+    free_resource(C_ref, 0);
+
+    free_resource(d_A, 1);
+    free_resource(d_B, 1);
+    free_resource(d_C, 1);
+
     return 0;
 }

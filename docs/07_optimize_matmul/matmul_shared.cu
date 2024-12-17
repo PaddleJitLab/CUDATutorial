@@ -107,11 +107,6 @@ int main()
     cudaMalloc((void **)&d_B, k * n * sizeof(float));
     cudaMalloc((void **)&d_C, m * n * sizeof(float));
 
-    // Copy data to device
-    cudaMalloc((void **)&d_A, m * k * sizeof(float));
-    cudaMalloc((void **)&d_B, k * n * sizeof(float));
-    cudaMalloc((void **)&d_C, m * n * sizeof(float));
-
     // Copy matrices to device
     cudaMemcpy(d_A, A, m * k * sizeof(float), cudaMemcpyHostToDevice);
     cudaMemcpy(d_B, B, k * n * sizeof(float), cudaMemcpyHostToDevice);
