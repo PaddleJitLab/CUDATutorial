@@ -201,7 +201,7 @@ int main()
         {
             pass = false;
             std::cout << "Verification failed at " << i << "!" << std::endl;
-            std::cout << "GPU: " << out_cpu[i] << " CPU: " << out[i] << std::endl;
+            std::cout << "CPU: " << out_cpu[i] << " GPU: " << out[i] << std::endl;
             break;
         }
     }
