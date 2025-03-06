@@ -133,12 +133,12 @@ int main()
     const int k = 5;                           // 卷积核数量
     const int r = 3;                           // 卷积核高
     const int s = 3;                           // 卷积核宽
-    const int out_h = (h - r + 2 * 0) / 1 + 1; // 输出高
-    const int out_w = (w - s + 2 * 0) / 1 + 1; // 输出宽
     const int u = 1;                           // 卷积在高方向上的步长
     const int v = 1;                           // 卷积在宽方向上的步长
     const int p = 0;                           // 卷积在高方向上的补边
     const int q = 0;                           // 卷积在宽方向上的补边
+    const int out_h = (h - r + 2 * p) / u + 1;  // 输出高
+    const int out_w = (w - s + 2 * q) / v + 1;  // 输出宽
 
     // 分配内存并随机生成输入数据和卷积核
     float *in, *weight, *out;
@@ -168,8 +168,9 @@ int main()
     cudaMemcpy(out_device, out, n * k * out_h * out_w * sizeof(float), cudaMemcpyHostToDevice);
 
     // 定义线程块的大小
-    const int blockDim_x = 16;
-    const int blockDim_y = 16;
+    const int blockDim_x =
+      (out_h * out_w / k) > 1024/k ? 1024/k : (out_h * out_w / k);
+    const int blockDim_y = k;
 
     // 计算线程块和网格的数量
     const int gridDim_x = (out_h * out_w + blockDim_x - 1) / blockDim_x;
@@ -200,7 +201,7 @@ int main()
         {
             pass = false;
             std::cout << "Verification failed at " << i << "!" << std::endl;
-            std::cout << "GPU: " << out_cpu[i] << " CPU: " << out[i] << std::endl;
+            std::cout << "CPU: " << out_cpu[i] << " GPU: " << out[i] << std::endl;
             break;
         }
     }
