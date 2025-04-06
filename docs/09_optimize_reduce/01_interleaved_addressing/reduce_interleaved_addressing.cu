@@ -25,7 +25,7 @@ __global__ void reduce_naive_kernel(int *arr, int *out, int len)
     for (int s = 1; s < bdim; s *= 2)
     {
         int index = 2 * s * tid;
-        if ((index + s < bdim) && (bdim * bid + s < len))
+        if ((index + s < bdim) && (bdim * bid + s + index < len))
         {
             sdata[index] += sdata[index + s];
         }
@@ -98,4 +98,4 @@ int main()
     delete[] arr;
     delete[] out;
     return 0;
-}⏎
+}
