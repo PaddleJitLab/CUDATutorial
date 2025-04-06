@@ -78,9 +78,9 @@ $$
 这里我们以一个最简单的例子来说明更新的过程。
 
 
-我们以 **序列长度 $ N = 4 $ 、特征维度 $ d = 2  $为例**，将输入矩阵 $\mathbf{Q}, \mathbf{K}, \mathbf{V}$ 均分为 **2 块**，展示 FlashAttention 的分块计算和流式更新过程。假设：
-- $\mathbf{Q} \in \mathbb{R}^{4 \times 2}$，分为 2 块：$\mathbf{Q}_1 \in \mathbb{R}^{2 \times 2}$, $\mathbf{Q}_2 \in \mathbb{R}^{2 \times 2}$（每块行数 $ B_r = 2 $ ）。
-- $\mathbf{K}, \mathbf{V} \in \mathbb{R}^{4 \times 2}$，分为 2 块：$\mathbf{K}_1, \mathbf{V}_1 \in \mathbb{R}^{2 \times 2}$, $\mathbf{K}_2, \mathbf{V}_2 \in \mathbb{R}^{2 \times 2}$（每块行数 $ B_c = 2 $ ）。
+我们以 **序列长度 $N = 4$ 、特征维度 $d = 2$ 为例**，将输入矩阵 $\mathbf{Q}, \mathbf{K}, \mathbf{V}$ 均分为 **2 块**，展示 FlashAttention 的分块计算和流式更新过程。假设：
+- $\mathbf{Q} \in \mathbb{R}^{4 \times 2}$，分为 2 块：$\mathbf{Q}_1 \in \mathbb{R}^{2 \times 2}$, $\mathbf{Q}_2 \in \mathbb{R}^{2 \times 2}$（每块行数 $B_r = 2$ ）。
+- $\mathbf{K}, \mathbf{V} \in \mathbb{R}^{4 \times 2}$，分为 2 块：$\mathbf{K}_1, \mathbf{V}_1 \in \mathbb{R}^{2 \times 2}$, $\mathbf{K}_2, \mathbf{V}_2 \in \mathbb{R}^{2 \times 2}$（每块行数 $B_c = 2$ ）。
 
 初始状态下：
 - 输出矩阵 $\mathbf{O} = \begin{bmatrix} 0 & 0 \\ 0 & 0 \\ 0 & 0 \\ 0 & 0 \end{bmatrix}$。
@@ -88,7 +88,7 @@ $$
 
 ---
 
-**步骤 1：外层循环 $ j=1 $，处理块 $\mathbf{K}_1$ , $\mathbf{V}_1$ :**
+**步骤 1：外层循环 $j=1$，处理块 $\mathbf{K}_1$， $\mathbf{V}_1$ :**
 
 1. **加载 $\mathbf{K}_1$, $\mathbf{V}_1$ 到 SRAM**：
 
@@ -122,14 +122,14 @@ $$
    - 类似地，加载 $\mathbf{Q}_2 = \begin{bmatrix} q_{31} & q_{32} \\ q_{41} & q_{42} \end{bmatrix}$，计算 $\mathbf{S}_{21} = \mathbf{Q}_2 \mathbf{K}_1^T$，更新后两行 $\mathbf{O}_2$。
 
 
-**步骤 2：外层循环 $ j=2 $，处理块 $\mathbf{K}_2, \mathbf{V}_2$ **
+**步骤 2：外层循环 $j=2$，处理块 $\mathbf{K}_2$， $\mathbf{V}_2$ ：**
 
-1. **加载 $\mathbf{K}_2, \mathbf{V}_2$ 到 SRAM**：
+1. **加载 $\mathbf{K}_2$, $\mathbf{V}_2$ 到 SRAM**：
    $$
    \mathbf{K}_2 = \begin{bmatrix} k_{31} & k_{32} \\ k_{41} & k_{42} \end{bmatrix}, \quad \mathbf{V}_2 = \begin{bmatrix} v_{31} & v_{32} \\ v_{41} & v_{42} \end{bmatrix}
    $$
 
-2. **内层循环 $ i=1 $，处理块 $\mathbf{Q}_1$ ：**
+2. **内层循环 $i=1$，处理块 $\mathbf{Q}_1$：**
    - **加载数据**：当前 $\mathbf{O}_1$ 已包含来自 $\mathbf{V}_1$ 的贡献。
    - **计算局部注意力分数**：
      $$
@@ -142,7 +142,7 @@ $$
      $$
    - **结果等价于全局 Softmax**：最终 $\mathbf{O}_1$ 为前两行注意力结果的加权和。
 
-3. **内层循环 $ i=2 $，处理块 $\mathbf{Q}_2$ ：**
+3. **内层循环 $i=2$，处理块 $\mathbf{Q}_2$：**
    - 类似地，计算 $\mathbf{S}_{22} = \mathbf{Q}_2 \mathbf{K}_2^T$，更新后两行 $\mathbf{O}_2$。
 
 
