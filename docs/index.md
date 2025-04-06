@@ -50,10 +50,13 @@
 + ...(补充中)
 
 ### 大师系列 💡
+
 我现在还不知道写啥，毕竟我现在还是菜鸡~~
 
 ### LLM 推理技术 🤖
 
++ [FlashAttention v1 - 原理篇](/flash_attn/flash_attn_v1_part1)
++ [FlashAttention v1 - 实现篇](/flash_attn/flash_attn_v1_part2)
 + [连续批处理](/continuous_batch)
 + [Page Attention - 原理篇](/page_attention)
 + [Page Attention - 源码解析](/vllm_page_attention)
