@@ -61,7 +61,7 @@
 ### LLM 推理技术 🤖
 
 + [Flash Attention v1 - 原理篇](./docs/17_flash_attn/01_flash_attn_v1_part1.md)
-+ [Flash Attention v1 - 实现篇](./docs/17_flash_attn/01_flash_attn_v1_part2.md)
++ [Flash Attention v1 - 实现篇](./docs/17_flash_attn/02_flash_attn_v1_part2.md)
 + [连续批处理](./docs/13_continuous_batch/README.md)
 + [Page Attention - 原理篇](./docs/14_page_attention/README.md)
 + [Page Attention - 源码解析](./docs/15_vllm_page_attention/README.md)
