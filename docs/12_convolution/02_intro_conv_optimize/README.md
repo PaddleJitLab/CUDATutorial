@@ -6,7 +6,7 @@
 
 ## 1. 卷积算法映射为矩阵乘法
 
-首先我们先来回顾一下卷积算法的定义，假设输入的特征图为 $X$，卷积核为 $K$，输出特征图为 $Y$，$X$ 的大小为 $N \times C \times H \times W$，$K$ 的大小为 $M \times C \times K_h \times K_w$，$Y$ 的大小为 $N \times M \times H \times W$。那么卷积算法的定义如下：
+首先我们先来回顾一下卷积算法的定义，假设输入的特征图为 $X$，卷积核为 $K$，输出特征图为 $Y$，$X$ 的大小为 $N \times C_{in} \times H_{in} \times W_{in}$，$K$ 的大小为 $M \times C_{in} \times K_h \times K_w$，$Y$ 的大小为 $N \times M \times H_{out} \times W_{out}$。那么卷积算法的定义如下：
 
 $$
 Y[n,oc,oh,ow] = \sum_{ic}\sum_{fh}\sum_{fw}X[n,ic,ih,iw] \times K[oc,ic,fh,fw]

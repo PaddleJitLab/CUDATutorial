@@ -88,7 +88,7 @@ $$
 
 ---
 
-**步骤 1：外层循环 $ j=1 $，处理块 $\mathbf{K}_1, \mathbf{V}_1$**
+**步骤 1：外层循环 $ j=1 $，处理块 $\mathbf{K}_1, \mathbf{V}_1$ **
 
 1. **加载 $\mathbf{K}_1, \mathbf{V}_1$ 到 SRAM**：
 
@@ -96,7 +96,7 @@ $$
     \mathbf{K}_1 = \begin{bmatrix} k_{11} & k_{12} \\ k_{21} & k_{22} \end{bmatrix}, \quad \mathbf{V}_1 = \begin{bmatrix} v_{11} & v_{12} \\ v_{21} & v_{22} \end{bmatrix}
     $$
 
-2. **内层循环 $ i=1 $，处理块 $\mathbf{Q}_1$**：
+2. **内层循环 $ i=1 $，处理块 $\mathbf{Q}_1$ **：
    - **加载数据**：
      $$
      \mathbf{Q}_1 = \begin{bmatrix} q_{11} & q_{12} \\ q_{21} & q_{22} \end{bmatrix}, \quad \mathbf{O}_1 = \begin{bmatrix} 0 & 0 \\ 0 & 0 \end{bmatrix}, \quad \ell_1 = [0, 0]^T, \quad m_1 = [-\infty, -\infty]^T
@@ -122,7 +122,7 @@ $$
    - 类似地，加载 $\mathbf{Q}_2 = \begin{bmatrix} q_{31} & q_{32} \\ q_{41} & q_{42} \end{bmatrix}$，计算 $\mathbf{S}_{21} = \mathbf{Q}_2 \mathbf{K}_1^T$，更新后两行 $\mathbf{O}_2$。
 
 
-**步骤 2：外层循环 $ j=2 $，处理块 $\mathbf{K}_2, \mathbf{V}_2$**
+**步骤 2：外层循环 $ j=2 $，处理块 $\mathbf{K}_2, \mathbf{V}_2$ **
 
 1. **加载 $\mathbf{K}_2, \mathbf{V}_2$ 到 SRAM**：
    $$
@@ -142,7 +142,7 @@ $$
      $$
    - **结果等价于全局 Softmax**：最终 $\mathbf{O}_1$ 为前两行注意力结果的加权和。
 
-3. **内层循环 $ i=2 $，处理块 $\mathbf{Q}_2$**：
+3. **内层循环 $ i=2 $，处理块 $\mathbf{Q}_2$ **：
    - 类似地，计算 $\mathbf{S}_{22} = \mathbf{Q}_2 \mathbf{K}_2^T$，更新后两行 $\mathbf{O}_2$。
 
 
