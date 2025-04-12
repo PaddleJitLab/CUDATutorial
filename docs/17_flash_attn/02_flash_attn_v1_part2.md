@@ -32,16 +32,16 @@ printf("Max shared memory: %d, requested shared memory: %d \n", max_sram_size, s
 
 如果请求的 sram_size 超过 max_sram_size，那么内核启动时将会失败，这时候我们需要调整 Bc、D、Br 的参数，找到平衡点，既能保证算法所需内存，又不会超过硬件限制。
 
-这里为了简单起见，在代码中直接将Bc和Br写成了固定值。值得注意的是，这个Br和Bc的值是可以不一样的，并且一定有$Br \leq Bc$。
+这里为了简单起见，在代码中直接将 Bc 和 Br 写成了固定值。值得注意的是，这个 Br 和 Bc 的值是可以不一样的，并且一定有$Br \leq Bc$。
 
 ```cpp
 const int Bc = 32;
 const int Br = 16;
 ```
 
-至于为什么一定会有$Br \leq Bc$，则可以回到在Flash Attention V1的论文里，其计算方式为 $Bc=\lceil \frac{M}{4d} \rceil$，$Br= min(\lceil \frac{M}{4d} \rceil, d)$。其中$M$是设备每个SM所能使用的最大共享内存空间大小，$d$是每个向量的维度。$4d$表示的是Q，K，V，S使用共享内存的子块大小之和。这里会发现当$\lceil \frac{M}{4d} \rceil > d$时，$Br = d < \lceil \frac{M}{4d} \rceil = Bc$。当$\lceil \frac{M}{4d} \rceil \leq d$时，$Br = \lceil \frac{M}{4d} \rceil = Bc$。所以一定会有$Br \leq Bc$。
+至于为什么一定会有$Br \leq Bc$，则可以回到在 Flash Attention V1 的论文里，其计算方式为 $Bc=\lceil \frac{M}{4d} \rceil$，$Br= min(\lceil \frac{M}{4d} \rceil, d)$。其中$M$是设备每个 SM 所能使用的最大共享内存空间大小，$d$是每个向量的维度。$4d$表示的是 Q，K，V，S 使用共享内存的子块大小之和。这里会发现当$\lceil \frac{M}{4d} \rceil > d$时，$Br = d < \lceil \frac{M}{4d} \rceil = Bc$。当$\lceil \frac{M}{4d} \rceil \leq d$时，$Br = \lceil \frac{M}{4d} \rceil = Bc$。所以一定会有$Br \leq Bc$。
 
-根据这个性质，当Br与Bc不相等时时，也可以只用简单的if语句就可以完成Q子块的加载，但设置Bc和Br的时候最好是相等的，可以提高GPU线程的利用率。
+根据这个性质，当 Br 与 Bc 不相等时时，也可以只用简单的 if 语句就可以完成 Q 子块的加载，但设置 Bc 和 Br 的时候最好是相等的，可以提高 GPU 线程的利用率。
 
 接下来，我们需要设置 CUDA 内核的执行维度（也就是 gridDim 和 blockDim）：
 
