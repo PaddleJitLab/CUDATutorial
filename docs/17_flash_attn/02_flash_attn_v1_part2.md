@@ -32,7 +32,7 @@ printf("Max shared memory: %d, requested shared memory: %d \n", max_sram_size, s
 
 如果请求的 sram_size 超过 max_sram_size，那么内核启动时将会失败，这时候我们需要调整 Bc、D、Br 的参数，找到平衡点，既能保证算法所需内存，又不会超过硬件限制。
 
-这里为了简单起见，在代码中直接写成了Bc和Br固定值。值得注意的是，这个Br和Bc的值是可以不一样的，并且一定有$Br \leq Bc$。
+这里为了简单起见，在代码中直接将Bc和Br写成了固定值。值得注意的是，这个Br和Bc的值是可以不一样的，并且一定有$Br \leq Bc$。
 
 ```cpp
 const int Bc = 32;
