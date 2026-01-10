@@ -53,8 +53,6 @@
 
 + [Triton 编程范式入门](/triton/triton_programming_paradigms)
 
-我现在还不知道写啥，毕竟我现在还是菜鸡~~
-
 ### LLM 推理技术 🤖
 
 + [FlashAttention v1 - 原理篇](/flash_attn/flash_attn_v1_part1)
