@@ -198,38 +198,11 @@ Triton 的 `mask` 机制则完全不同。`mask = offsets < n_elements` 是一�
 
 #### CUDA 的执行方式
 
-```
-配置：blockSize = 256, numBlocks = 40
-
-Grid
-├── Block[0]           Block[1]           ...  Block[39]
-│   ├── Thread[0]      ├── Thread[0]           ├── Thread[0]
-│   │   处理 idx=0     │   处理 idx=256        │   处理 idx=9984
-│   ├── Thread[1]      ├── Thread[1]           ├── Thread[1]
-│   │   处理 idx=1     │   处理 idx=257        │   处理 idx=9985
-│   ├── ...            ├── ...                 ├── ...
-│   └── Thread[255]    └── Thread[255]         └── Thread[255]
-│       处理 idx=255       处理 idx=511             处理 idx=10239 (越界！)
-
-总共启动: 40 × 256 = 10240 个线程
-其中 240 个线程因为 if (idx < 10000) 被过滤掉
-```
+![图 0](images/a476e6f0adb4c9de8c67f9451247ff520d044a1cdc65708a2760b94fa4e803f3.png)
 
 #### Triton 的执行方式
 
-```
-配置：BLOCK_SIZE = 1024, numPrograms = 10
-
-Grid
-├── Program[0]           Program[1]           ...  Program[9]
-│   处理元素             处理元素                   处理元素
-│   [0~1023]            [1024~2047]                [9216~10239]
-│                                                   (其中 10000~10239 被 mask 过滤)
-
-总共启动: 10 个 Program Instance
-每个 Program 处理 1024 个元素（向量化）
-Triton 内部会自动映射到合适的线程配置
-```
+![图 1](images/0d3e9e7c3877312abfbde75dea15acc1e2b671548a26a4e86a114ce6a59a22cd.png)  
 
 从这个例子可以看出，CUDA 启动了 10240 个线程，你需要思考"我是第几号线程"。而 Triton 只启动了 10 个 Program Instance，你要思考的是"我处理哪批数据"。这种抽象层次的提升，让代码更简洁，也更容易理解。
 
@@ -263,26 +236,21 @@ Triton 的 Grid 配置则简单得多，你只需要指定 `BLOCK_SIZE`（每个
 
 ## 四、课后练习
 
-请打开 `01_exercises.py` 完成以下三个练习：练习 1 实现 AXPY 操作（$Z = \alpha \cdot X + Y$），巩固基本的向量化加载和存储；练习 2 测试不同 `BLOCK_SIZE` 的性能影响，理解为什么 Triton 的最优 `BLOCK_SIZE` 比 CUDA 的 `blockDim` 要大；练习 3 实现 1D 卷积，体会如何用向量化方式处理滑动窗口操作。每个练习都包含了测试函数和思考题。
+请打开 [homework.ipynb](https://github.com/PaddleJitLab/CUDATutorial/tree/develop/docs/18_triton/01_triton_programming_paradigms/homework.ipynb) 完成以下练习：练习 1 实现 AXPY 操作（$Z = \alpha \cdot X + Y$），巩固基本的向量化加载和存储；练习 2 实现 1D 卷积，体会如何用向量化方式处理滑动窗口操作。每个练习都包含了测试函数和思考题。
 
 ## 五、常见问题 FAQ
 
-### Q1: Triton 的 BLOCK_SIZE 应该设置多大？
+### Q1: Triton 内部到底有没有线程？性能会比 CUDA 差吗？
 
-**A**: 如果你有 CUDA 经验，需要注意 CUDA 的经验值在这里不适用。CUDA 的 `blockDim.x` 通常设置为 128/256/512，而 Triton 的 `BLOCK_SIZE` 通常要大得多，一般是 1024/2048/4096。这是因为 Triton 的 `BLOCK_SIZE` 表示的是元素数，而不是线程数。建议从 1024 开始尝试，然后根据性能 profiling 的结果进行调整。影响最优 `BLOCK_SIZE` 的因素包括：寄存器使用量、Shared Memory 大小、以及数据复用程度。
-
-
-### Q2: Triton 内部到底有没有线程？性能会比 CUDA 差吗？
-
-**A**: Triton 内部是有线程的，只是抽象层次更高，不暴露给程序员。Triton 编译器会将你写的向量化代码编译成高效的 PTX（GPU 汇编），最终还是在 GPU 的线程上执行。在性能方面，对于简单算子（如 element-wise 操作），Triton 的性能可以接近手写的优化 CUDA 代码；对于复杂算子（如 Flash Attention），Triton 可以达到优化后 CUDA 的 95% 以上的性能。但在开发效率方面，Triton 远远领先于 CUDA。
+**A**: 从硬件执行层面看，Triton 代码最终仍然运行在 GPU 的线程和 warp 上，只是 Triton 提供了更高层次的编程抽象，不直接暴露线程和 block 的概念。Triton 编译器会将向量化的程序描述转换为高效的 PTX / SASS，并映射到底层 GPU 执行模型。在性能方面，对于简单算子（如 element-wise 或带宽受限算子），Triton 通常可以达到接近手写 CUDA 的性能；对于高度优化的复杂算子（如 Flash Attention），Triton 在实践中也能达到与优化 CUDA 实现相当、或略低的性能水平。相比之下，Triton 在开发效率和可维护性方面通常具有明显优势。
 
 
-### Q3: mask 操作会导致性能下降吗？（类似 Warp Divergence）
+### Q2: mask 操作会导致性能下降吗？（类似 Warp Divergence）
 
-**A**: Triton 的 `mask` 是向量化的，编译器会生成 predicated instructions（带谓词的指令），不会像 CUDA 的标量 `if` 那样导致严重的 Warp Divergence。性能损失通常可以忽略。从技术细节来看，现代 GPU 支持 predicated execution，每个线程都有独立的 predicate 寄存器。Triton 编译器会自动将 `mask` 映射到这些硬件特性，因此可以在不引入分支的情况下实现条件执行。
+**A**: Triton 的 mask 是向量化语义，编译器通常会将其生成 predicated instructions（带谓词的指令），而不是显式的分支跳转，因此不会像 CUDA 中不当使用 if 那样引入严重的 warp divergence。
+在大多数连续访问、边界检查类场景中，mask 带来的性能开销较小；但如果 mask 覆盖比例很大或访问模式高度稀疏，仍然可能造成一定的算力浪费。总体而言，mask 是 Triton 中推荐且高效的边界处理方式。
 
-
-### Q4: 什么时候不能用 Triton？
+### Q3: 什么时候不能用 Triton？
 
 **A**: 以下场景建议使用 CUDA：
 1. 需要显式管理 Shared Memory 布局（如手动消除 Bank Conflicts）
@@ -291,7 +259,7 @@ Triton 的 Grid 配置则简单得多，你只需要指定 `BLOCK_SIZE`（每个
 4. 算法严重依赖线程间细粒度通信
 5. 需要与现有 CUDA 代码库深度集成
 
-### Q5: 如何从 CUDA 代码迁移到 Triton？
+### Q4: 如何从 CUDA 代码迁移到 Triton？
 
 **A**: 五步迁移法：
 
@@ -355,4 +323,4 @@ Triton 的 Grid 配置则简单得多，你只需要指定 `BLOCK_SIZE`（每个
 - [OpenAI Triton GitHub](https://github.com/openai/triton)
 - [CUDA Programming Guide](https://docs.nvidia.com/cuda/cuda-c-programming-guide/index.html)
 
-**下一步**：完成所有练习后，进入 **Module 02: 内存与数据搬运**，学习更复杂的内存访问模式！
+**下一步**：完成所有练习后，进入 **02: 内存与数据搬运**，学习更复杂的内存访问模式！
