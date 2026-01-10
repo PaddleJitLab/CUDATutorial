@@ -240,7 +240,7 @@ Triton 的 Grid 配置则简单得多，你只需要指定 `BLOCK_SIZE`（每个
 
 ## 五、常见问题 FAQ
 
-### Q1: Triton 内部到底有没有线程？性能会比 CUDA 差吗？
+### Q1: Triton 内部到底有没有线程？性能会比 CUDA 差吗
 
 **A**: 从硬件执行层面看，Triton 代码最终仍然运行在 GPU 的线程和 warp 上，只是 Triton 提供了更高层次的编程抽象，不直接暴露线程和 block 的概念。Triton 编译器会将向量化的程序描述转换为高效的 PTX / SASS，并映射到底层 GPU 执行模型。在性能方面，对于简单算子（如 element-wise 或带宽受限算子），Triton 通常可以达到接近手写 CUDA 的性能；对于高度优化的复杂算子（如 Flash Attention），Triton 在实践中也能达到与优化 CUDA 实现相当、或略低的性能水平。相比之下，Triton 在开发效率和可维护性方面通常具有明显优势。
 
@@ -250,7 +250,7 @@ Triton 的 Grid 配置则简单得多，你只需要指定 `BLOCK_SIZE`（每个
 **A**: Triton 的 mask 是向量化语义，编译器通常会将其生成 predicated instructions（带谓词的指令），而不是显式的分支跳转，因此不会像 CUDA 中不当使用 if 那样引入严重的 warp divergence。
 在大多数连续访问、边界检查类场景中，mask 带来的性能开销较小；但如果 mask 覆盖比例很大或访问模式高度稀疏，仍然可能造成一定的算力浪费。总体而言，mask 是 Triton 中推荐且高效的边界处理方式。
 
-### Q3: 什么时候不能用 Triton？
+### Q3: 什么时候不能用 Triton
 
 **A**: 以下场景建议使用 CUDA：
 1. 需要显式管理 Shared Memory 布局（如手动消除 Bank Conflicts）
@@ -259,7 +259,7 @@ Triton 的 Grid 配置则简单得多，你只需要指定 `BLOCK_SIZE`（每个
 4. 算法严重依赖线程间细粒度通信
 5. 需要与现有 CUDA 代码库深度集成
 
-### Q4: 如何从 CUDA 代码迁移到 Triton？
+### Q4: 如何从 CUDA 代码迁移到 Triton
 
 **A**: 五步迁移法：
 
