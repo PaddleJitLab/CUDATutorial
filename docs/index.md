@@ -48,9 +48,9 @@
 + 使用多个 GPU 计算
 + ...(补充中)
 
-### 大师系列 💡
+### Triton 系列 💡
 
-我现在还不知道写啥，毕竟我现在还是菜鸡~~
++ [Triton 编程范式入门](/triton/triton_programming_paradigms)
 
 ### LLM 推理技术 🤖
 
