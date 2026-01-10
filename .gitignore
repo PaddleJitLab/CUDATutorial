@@ -31,3 +31,4 @@
 *.out
 *.app
 .DS_Store
+.vscode
