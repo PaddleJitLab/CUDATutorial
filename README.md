@@ -57,6 +57,7 @@
 ### Triton 系列 💡
 
 + [Triton 编程范式入门](./docs/18_triton/01_triton_programming_paradigms/README.md)
++ [Triton 内存和数据传输](./docs/18_triton/02_triton_memory_and_data_movement/README.md)
 
 ### LLM 推理技术 🤖
 
