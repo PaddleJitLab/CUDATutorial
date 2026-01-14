@@ -53,6 +53,7 @@
 
 + [Triton 编程范式入门](/triton/triton_programming_paradigms)
 + [Triton 内存和数据传输](/triton/triton_memory_and_data_movement)
++ [Triton Softmax 算子实现](/triton/triton_softmax)
 
 ### LLM 推理技术 🤖
 
