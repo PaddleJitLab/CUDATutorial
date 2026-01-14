@@ -58,6 +58,7 @@
 
 + [Triton 编程范式入门](./docs/18_triton/01_triton_programming_paradigms/README.md)
 + [Triton 内存和数据传输](./docs/18_triton/02_triton_memory_and_data_movement/README.md)
++ [Triton Softmax 算子实现](./docs/18_triton/03_triton_softmax/README.md)
 
 ### LLM 推理技术 🤖
 
